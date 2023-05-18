@@ -1,6 +1,7 @@
 # HomeAssistant-client
-Pörssäri Home Assistant integration
+Pörssäri on mahdollista ottaa käyttöön myös Home Assistantin kautta. Home Assistant -laitteeseen lisätään automaattisesti 8 ohjauskanavaa, ja lisäksi käyttäjäkohtainen hintadata tuodaan käyttöön tuntirankeineen.
 
+Esimerkki käyttöliittymästä (views.yaml):
 ![Example UI](/img/ui_example.png)
 
 ## Käyttöönotto
