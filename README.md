@@ -1,7 +1,9 @@
 # HomeAssistant-client
 Pörssäri Home Assistant integration
 
-### Käyttöönotto
+![Example UI](/img/ui_example.png)
+
+## Käyttöönotto
 Lisää porssari_core.yaml sekä porssari_sensors.yaml -tiedostot Home Assistantin config-hakemistoon
 
 Lisää seuraavat rivit configuration.yaml -tiedostoon:
