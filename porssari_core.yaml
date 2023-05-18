@@ -16,7 +16,7 @@ rest:
         {% set timestamp = state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] %}
         {% set fetch_url = state_attr("sensor.porssari_json_data", "Metadata")['Fetch_url'] %}
       {% endif %}  
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta1&prices=true
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant-1.0-beta1&prices=true
     scan_interval: 604800
     sensor:
       - name: "porssari_json"
@@ -46,7 +46,7 @@ sensor:
         {%- set timestamp = state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] -%}
         {%- set fetch_url = state_attr("sensor.porssari_json_data", "Metadata")['Fetch_url'] -%}
       {%- endif -%}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta1"
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant-1.0-beta1"
     name: "porssari_request"
     scan_interval: 604800
     value_template: "{{ value }}"
