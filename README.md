@@ -20,7 +20,7 @@ homeassistant:
 ### Hintatiedot
 Ohjaustiedon mukana toimitetaan myös käyttäjäkohtainen hintatieto. Esimerkki hintatiedon käytöstä löytyy porssari_sensors.yaml -tiedoston sensoreista. 
 
-Esimerkki json-tiedoston rakenteesta hintatiedon osalta:
+Esimerkki json-ohjausdatan rakenteesta hintatiedon osalta:
 
 ```json
 "Prices": {
