@@ -17,6 +17,11 @@ homeassistant:
     porssari_sensors: !include porssari_sensors.yaml
 ```
 
+### Ohjaus
+
+Pörssäri-integraatio luo Home Assistantiin 8 kappaletta ohjaussensoreita, jotka saavat arvon 0 tai 1 sen perusteella kytketäänkö kyseinen tunti päälle vai pois. Näitä sensoreita voi käyttää automaatiotriggereinä Home Assistantin ohjaamien laitteiden päälle- ja poiskytkentään. Mikäli kanavalle ei ole määritetty ohjausparametreja Pörssäri-sivustolla, sensori saa arvon -1.
+
+
 ### Hintatiedot
 Ohjaustiedon mukana toimitetaan myös käyttäjäkohtainen hintatieto. Esimerkki hintatiedon käytöstä löytyy porssari_sensors.yaml -tiedoston sensoreista. 
 
