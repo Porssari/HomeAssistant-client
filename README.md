@@ -17,6 +17,9 @@ homeassistant:
     porssari_sensors: !include porssari_sensors.yaml
 ```
 
+Sivustolle laitetta lisätessä luodaan yksilöllinen laitetunnus HAXXXXXXXXXX. Kyseinen laitetunnus lisätään text input -Pörssäri laitetunnuksen arvoksi minkä jälkeen request-sensorin tulisi saada arvo 200 tai 304 merkkinä onnistuneesta palvelinkyselystä. Lisäksi sivuston viimeksi nähty -aikaleima tulisi päivittyä vastaamaan nykyistä ajanhetkeä.
+
+
 ### Ohjaus
 
 Pörssäri-integraatio luo Home Assistantiin 8 kappaletta ohjaussensoreita, jotka saavat arvon 0 tai 1 sen perusteella kytketäänkö kyseinen tunti päälle vai pois. Näitä sensoreita voi käyttää automaatiotriggereinä Home Assistantin ohjaamien laitteiden päälle- ja poiskytkentään. Mikäli kanavalle ei ole määritetty ohjausparametreja Pörssäri-sivustolla, sensori saa arvon -1.
