@@ -17,7 +17,7 @@ homeassistant:
     porssari_sensors: !include porssari_sensors.yaml
 ```
 
-Sivustolle laitetta lisätessä luodaan yksilöllinen laitetunnus HAXXXXXXXXXX. Kyseinen laitetunnus lisätään text input -Pörssäri laitetunnuksen arvoksi minkä jälkeen request-sensorin tulisi saada arvo 200 tai 304 merkkinä onnistuneesta palvelinkyselystä. Lisäksi sivuston viimeksi nähty -aikaleima tulisi päivittyä vastaamaan nykyistä ajanhetkeä.
+Sivustolle laitetta lisätessä luodaan yksilöllinen laitetunnus HAXXXXXXXXXX. Kyseinen laitetunnus lisätään input_text.porssari_mac -kentän arvoksi, minkä jälkeen request-sensorin tulisi saada arvo 200 tai 304 merkkinä onnistuneesta palvelinkyselystä. Lisäksi sivuston viimeksi nähty -aikaleima tulisi päivittyä vastaamaan nykyistä ajanhetkeä.
 
 
 ### Ohjaus
