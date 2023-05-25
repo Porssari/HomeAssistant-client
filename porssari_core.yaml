@@ -8,19 +8,19 @@
 # JSON-request from server
 rest:
   - resource_template: >
-      {% set MAC = states('input_text.porssari_mac') if states('input_text.porssari_mac') | length > 5 else "HA_undefined" %}
-      {% if states('sensor.porssari_json') == 'unknown' %}
-        {% set timestamp = 0 %}
-        {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
-      {% else %}
+      {% set MAC = states('input_text.porssari_mac') if states('input_text.porssari_mac') | length > 10 else "HA_undefined" %} 
+      {% if state_attr("sensor.porssari_json_data", "Metadata") %}
         {% set timestamp = state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] %}
         {% set fetch_url = state_attr("sensor.porssari_json_data", "Metadata")['Fetch_url'] %}
+      {% else %}
+        {% set timestamp = 0 %}
+        {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
       {% endif %}  
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant-1.0-beta1&prices=true
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta2&prices=true
     scan_interval: 604800
     sensor:
       - name: "porssari_json"
-        value_template: "{{ value_json.Metadata.Timestamp }}"
+        value_template: "{{ value_json.Metadata.Timestamp if value_json else 0 }}"
         json_attributes:
           - Metadata
           - Prices
@@ -39,14 +39,14 @@ sensor:
     command: >-
       curl -o /dev/null -qsI -w "%{http_code}\n" "
       {%- set MAC = states('input_text.porssari_mac') if states('input_text.porssari_mac') | length > 5 else "HA_undefined" -%}
-      {%- if states('sensor.porssari_json') == 'unknown' -%}
-        {%- set timestamp = 0 -%}
-        {%- set fetch_url = "https://api.porssari.fi/getcontrols.php" -%}
-      {%- else -%}
+      {%- if state_attr("sensor.porssari_json_data", "Metadata") -%}
         {%- set timestamp = state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] -%}
         {%- set fetch_url = state_attr("sensor.porssari_json_data", "Metadata")['Fetch_url'] -%}
+      {%- else -%}
+        {%- set timestamp = 0 -%}
+        {%- set fetch_url = "https://api.porssari.fi/getcontrols.php" -%}
       {%- endif -%}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant-1.0-beta1"
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta1"
     name: "porssari_request"
     scan_interval: 604800
     value_template: "{{ value }}"
@@ -60,6 +60,8 @@ template:
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set curHour = now().hour | string %}
             {{ state_attr("sensor.porssari_json_data", "Channel1")[curHour] }}
+          {% else %}
+            {{ -1 }}
           {% endif %}
       - name: "Pörssäri Channel 2 State"
         unique_id: porssari_ch2_state
@@ -67,6 +69,8 @@ template:
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set curHour = now().hour | string %}
             {{ state_attr("sensor.porssari_json_data", "Channel2")[curHour] }}
+          {% else %}
+            {{ -1 }}
           {% endif %}
       - name: "Pörssäri Channel 3 State"
         unique_id: porssari_ch3_state
@@ -74,6 +78,8 @@ template:
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set curHour = now().hour | string %}
             {{ state_attr("sensor.porssari_json_data", "Channel3")[curHour] }}
+          {% else %}
+            {{ -1 }}
           {% endif %}
       - name: "Pörssäri Channel 4 State"
         unique_id: porssari_ch4_state
@@ -81,6 +87,8 @@ template:
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set curHour = now().hour | string %}
             {{ state_attr("sensor.porssari_json_data", "Channel4")[curHour] }}
+          {% else %}
+            {{ -1 }}
           {% endif %}
       - name: "Pörssäri Channel 5 State"
         unique_id: porssari_ch5_state
@@ -88,6 +96,8 @@ template:
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set curHour = now().hour | string %}
             {{ state_attr("sensor.porssari_json_data", "Channel5")[curHour] }}
+          {% else %}
+            {{ -1 }}
           {% endif %}
       - name: "Pörssäri Channel 6 State"
         unique_id: porssari_ch6_state
@@ -95,6 +105,8 @@ template:
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set curHour = now().hour | string %}
             {{ state_attr("sensor.porssari_json_data", "Channel6")[curHour] }}
+          {% else %}
+            {{ -1 }}
           {% endif %}
       - name: "Pörssäri Channel 7 State"
         unique_id: porssari_ch7_state
@@ -102,6 +114,8 @@ template:
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set curHour = now().hour | string %}
             {{ state_attr("sensor.porssari_json_data", "Channel7")[curHour] }}
+          {% else %}
+            {{ -1 }}
           {% endif %}
       - name: "Pörssäri Channel 8 State"
         unique_id: porssari_ch8_state
@@ -109,6 +123,8 @@ template:
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set curHour = now().hour | string %}
             {{ state_attr("sensor.porssari_json_data", "Channel8")[curHour] }}
+          {% else %}
+            {{ -1 }}
           {% endif %}
 
   # Sensor to save request json data.
@@ -117,6 +133,8 @@ template:
         state: >
           {% if state_attr("sensor.porssari_json_data", "Metadata") %}
             {{ state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] }}
+          {% else %}
+            {{ 0 }}
           {% endif %}
         attributes:
           Metadata: >
