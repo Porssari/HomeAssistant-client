@@ -66,16 +66,17 @@ template:
           Hour: >
             {% if is_state('binary_sensor.porssari_json_prices', 'on') %}
               {% set timeStampList = state_attr("sensor.porssari_json_data", "Prices") | list %}
-              {% set ns = namespace(prices=[], hours=[]) %}
+              {% set ns = namespace(ts=[], prices=[], hours=[]) %}
               {% for item in timeStampList %}
                 {% if now().day == as_datetime(item).day %}
+                  {% set ns.ts = ns.ts + [item] %}
                   {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data", "Prices")[item]['Price'] | float] %}
                 {% endif %}
               {% endfor %}
-              {% set min = ns.prices | min | float %}
-              {% for item in timeStampList %}
-                {% if state_attr("sensor.porssari_json_data", "Prices")[item]['Price'] | float == min %}
-                  {% set ns.hours = as_datetime(item).hour | int %}
+              {% set pmin = ns.prices | min | float %}
+              {% for item in ns.ts %}
+                {% if state_attr("sensor.porssari_json_data", "Prices")[item]['Price'] | float == pmin %}
+                  {% set ns.hours = ns.hours + [as_datetime(item).hour | int] %}
                 {% endif %}
               {% endfor %}
               {{ ns.hours }}
@@ -102,16 +103,17 @@ template:
           Hour: >
             {% if is_state('binary_sensor.porssari_json_prices', 'on') %}
               {% set timeStampList = state_attr("sensor.porssari_json_data", "Prices") | list %}
-              {% set ns = namespace(prices=[], hours=[]) %}
+              {% set ns = namespace(ts=[], prices=[], hours=[]) %}
               {% for item in timeStampList %}
                 {% if now().day == as_datetime(item).day %}
+                  {% set ns.ts = ns.ts + [item] %}
                   {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data", "Prices")[item]['Price'] | float] %}
                 {% endif %}
               {% endfor %}
-              {% set max = ns.prices | max | float %}
-              {% for item in timeStampList %}
-                {% if state_attr("sensor.porssari_json_data", "Prices")[item]['Price'] | float == max %}
-                  {% set ns.hours = as_datetime(item).hour | int %}
+              {% set pmin = ns.prices | max | float %}
+              {% for item in ns.ts %}
+                {% if state_attr("sensor.porssari_json_data", "Prices")[item]['Price'] | float == pmin %}
+                  {% set ns.hours = ns.hours + [as_datetime(item).hour | int] %}
                 {% endif %}
               {% endfor %}
               {{ ns.hours }}
