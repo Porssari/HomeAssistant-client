@@ -16,7 +16,7 @@ rest:
         {% set timestamp = 0 %}
         {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
       {% endif %}  
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta2&prices=true
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant-1.0-beta2.1&prices=true
     scan_interval: 604800
     sensor:
       - name: "porssari_json"
@@ -46,7 +46,7 @@ sensor:
         {%- set timestamp = 0 -%}
         {%- set fetch_url = "https://api.porssari.fi/getcontrols.php" -%}
       {%- endif -%}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta2"
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant-1.0-beta2.1"
     name: "porssari_request"
     scan_interval: 604800
     value_template: "{{ value }}"
@@ -167,7 +167,7 @@ template:
             {% set fromJson = utcnow().timestamp() - timestamp %}
             {% set hoursCount = state_attr("sensor.porssari_json_data", "Metadata")['Hours_count'] %}
             {% set maxDiff = hoursCount * 3600 %}
-            {{ maxDiff - fromJson > 0 }}
+            {{ maxDiff - fromJson > 3600 }}
           {% else %}
             {{ false }}
           {% endif %}
