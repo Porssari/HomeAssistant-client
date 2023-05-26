@@ -17,7 +17,13 @@ homeassistant:
     porssari_sensors: !include porssari_sensors.yaml
 ```
 
-Sivustolle laitetta lisätessä luodaan yksilöllinen laitetunnus HAXXXXXXXXXX. Kyseinen laitetunnus lisätään input_text.porssari_mac -kentän arvoksi, minkä jälkeen request-sensorin tulisi saada arvo 200 tai 304 merkkinä onnistuneesta palvelinkyselystä. Lisäksi sivuston viimeksi nähty -aikaleima tulisi päivittyä vastaamaan nykyistä ajanhetkeä.
+Pörssäri-sivustolle lisätään laite "Home Assistant". Laitetta lisätessä sivustolla luodaan yksilöllinen laitetunnus (HAXXXXXXXXXX). Tämä laitetunnus tulee näkyviin Pörssäri-sivuston laitehallintaan kun laite on onnistuneesti lisätty.
+
+Kyseinen laitetunnus lisätään Home Assistantissa input_text.porssari_mac -kentän arvoksi. Tämän jälkeen noin kahden minuutin kuluessa porssari_request-sensorin tulisi saada arvo 200 tai 304 merkkinä onnistuneesta palvelinkyselystä, ja puolen minuutin kuluessa tämän jälkeen muiden sensoreiden tulisi saada tila sekä attribuutit. 
+
+Onnistuneen palvelinkyselyn seurauksena Pörssäri-sivuston laitehallinnan Viimeksi nähty -aikaleima päivittyy vastaamaan nykyistä ajanhetkeä.
+
+Yhteyskatkojen varalle on mahdollista ottaa käyttöön Telegram-viestisovellukseen integroitu yhteysvahti. Ohjeet tämän käyttöönottamiseksi löytyy osoitteesta https://porssari.fi/ohjeet/yhteysvahdin-kayttoonotto
 
 
 ### Ohjaus
