@@ -17,7 +17,7 @@ homeassistant:
     porssari_sensors: !include porssari_sensors.yaml
 ```
 
-Pörssäri-sivustolle lisätään laite "Home Assistant". Laitetta lisätessä sivustolla luodaan yksilöllinen laitetunnus (HAXXXXXXXXXX). Tämä laitetunnus tulee näkyviin Pörssäri-sivuston laitehallintaan kun laite on onnistuneesti lisätty.
+Pörssäri-sivuston laitehallintaan lisätään laite "Home Assistant". Laitetta lisätessä sivustolla luodaan yksilöllinen laitetunnus (HAXXXXXXXXXX). Tämä laitetunnus tulee näkyviin Pörssäri-sivuston laitehallintaan kun laite on onnistuneesti lisätty.
 
 Kyseinen laitetunnus lisätään Home Assistantissa input_text.porssari_mac -kentän arvoksi. Tämän jälkeen noin kahden minuutin kuluessa porssari_request-sensorin tulisi saada arvo 200 tai 304 merkkinä onnistuneesta palvelinkyselystä, ja puolen minuutin kuluessa tämän jälkeen muiden sensoreiden tulisi saada tila sekä attribuutit. 
 
