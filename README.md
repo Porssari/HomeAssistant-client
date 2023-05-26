@@ -40,7 +40,7 @@ Mikäli kanavalle ei ole määritetty ohjausparametreja Pörssäri-sivustolla, s
 ### Hintatiedot
 Ohjaustiedon mukana toimitetaan myös käyttäjäkohtainen hintatieto. Esimerkki hintatiedon käytöstä löytyy porssari_sensors.yaml -tiedoston sensoreista.
 
-Käyttäjäkohtaiset hinta-asetukset tehdään Pörssäri-sivustolla. Lomake asetusten tekemiseen löytyy valikosta "Ohjaus - Hinta-asetukset". Toistaiseksi hinta-asetukset päivittyvät Home Assistantiin noin tunnin viiveellä mikäli kanava-asetuksia ei muuteta. Tähän asiaan tehdään korjaus kesäkuun 2023 aikana, minkä jälkeen hinta-asetukset päivittyvät myös jokaisen palvelinkyselyn yhteydessä.
+Käyttäjäkohtaiset hinta-asetukset tehdään Pörssäri-sivustolla. Lomake asetusten tekemiseen löytyy valikosta "Ohjaus - Hinta-asetukset". Toistaiseksi hinta-asetukset päivittyvät Home Assistantiin noin tunnin viiveellä mikäli ohjausasetuksia ei muuteta. Tähän asiaan tehdään korjaus kesäkuun 2023 aikana, minkä jälkeen myös hinta-asetusten muutos päivittyy jokaisen palvelinkyselyn yhteydessä.
 
 Esimerkki json-ohjausdatan rakenteesta hintatiedon osalta:
 
