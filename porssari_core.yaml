@@ -163,11 +163,11 @@ template:
       - name: porssari_json_controls
         state: >
           {% if state_attr("sensor.porssari_json_data", "Metadata") %}
-            {% set timestamp = state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] | int %}
-            {% set fromJson = utcnow().timestamp() - timestamp %}
+            {% set timestamp = as_datetime(state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] | int).strftime('%Y-%m-%dT%H:00:00%z') %}
+            {% set fromJson = utcnow().timestamp() - as_datetime(timestamp).timestamp() %}
             {% set hoursCount = state_attr("sensor.porssari_json_data", "Metadata")['Hours_count'] %}
             {% set maxDiff = hoursCount * 3600 %}
-            {{ maxDiff - fromJson > 3600 }}
+            {{ maxDiff - fromJson > 0 }}
           {% else %}
             {{ false }}
           {% endif %}
