@@ -28,7 +28,13 @@ Yhteyskatkojen varalle on mahdollista ottaa käyttöön Telegram-viestisovelluks
 
 ### Ohjaus
 
-Pörssäri-integraatio luo Home Assistantiin 8 kappaletta ohjaussensoreita, jotka saavat arvon 0 tai 1 sen perusteella kytketäänkö kyseinen tunti päälle vai pois. Näitä sensoreita voi käyttää automaatiotriggereinä Home Assistantin ohjaamien laitteiden päälle- ja poiskytkentään. Mikäli kanavalle ei ole määritetty ohjausparametreja Pörssäri-sivustolla, sensori saa arvon -1.
+Pörssäri-integraatio luo Home Assistantiin 8 kappaletta ohjaussensoreita, jotka saavat arvon 0 tai 1 sen perusteella kytketäänkö kyseinen tunti päälle vai pois. Näitä sensoreita voi käyttää automaatiotriggereinä Home Assistantin ohjaamien laitteiden päälle- ja poiskytkentään. 
+
+Ohjausehtojen muokkaus suoritetaan toistaiseksi Pörssäri-sivuston laitehallinnan kautta valitsemalla Home Assistant -laitteen kohdalta "Muuta laitteen asetuksia". Kyseinen valinta avaa sivun, missä jokaisen kahdeksan ohjauskanavan senhetkiset asetukset ovat nähtävissä, ja niitä pääsee yksi kerrallaan muokkaamaan.
+
+Päivitetyt asetukset haetaan Home Assistantiin seuraavan palvelinkyselyn yhteydessä. Home Assistantista suoritetaan palvelinkysely Pörssärin rajapintaan 1,5 - 2,5 minuutin välein.
+
+Mikäli kanavalle ei ole määritetty ohjausparametreja Pörssäri-sivustolla, sensori saa arvon -1.
 
 
 ### Hintatiedot
