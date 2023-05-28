@@ -15,8 +15,10 @@ header:
   show_states: true
 yaxis:
   - min: ~0
-    max: ~20
-    decimals: 2
+    max: ~10
+    decimals: 1
+    apex_config:
+      forceNiceScale: true
 series:
   - entity: sensor.porssari_json_data
     show:
@@ -25,14 +27,13 @@ series:
       legend_value: false
     type: column
     color: lightgray
-    float_precision: 2
     unit: snt/kWh
     data_generator: |
       let res = [];
       for (const [key, value] of Object.entries(entity.attributes.Prices)) {
         let d = new Date(key).getTime();
-        if (d > 0)
-          res.push([d, value.Price]);
+        let p = parseFloat(value.Price);
+        res.push([d, p]);
       }
       return res.sort((a, b) => { return a[0] - b[0] });
     color_threshold:
