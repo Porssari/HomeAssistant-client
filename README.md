@@ -1,7 +1,7 @@
 # HomeAssistant-client
 Pörssäri on mahdollista ottaa käyttöön myös Home Assistantin kautta. Home Assistant -laitteeseen lisätään automaattisesti 8 ohjauskanavaa, ja lisäksi käyttäjäkohtainen hintadata tuodaan käyttöön tuntirankeineen.
 
-Esimerkki käyttöliittymästä ApexChart -lisäosakortin kanssa (lovelace/views_apexchart.yaml):
+Esimerkki käyttöliittymästä ApexChart -lisäosakortin (https://github.com/RomRider/apexcharts-card) kanssa (lovelace/views_apexchart.yaml):
 
 ![Example UI with apexchart](/img/hintatiedot_chart.png)
 
