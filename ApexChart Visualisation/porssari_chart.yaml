@@ -15,7 +15,7 @@ header:
   show_states: true
 yaxis:
   - min: ~0
-    max: ~10
+    max: ~20
     decimals: 2
 series:
   - entity: sensor.porssari_json_data
