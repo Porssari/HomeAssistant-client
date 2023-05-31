@@ -1,0 +1,112 @@
+template:
+  - sensor:
+      - name: porssari_water_heating_trigger
+        device_class: timestamp
+        state: >
+          {# Add sensor name to sensorName variable #}
+          {% set sensorName = "porssari_water_heating_trigger" %}
+          
+          {# Do not edit template below this line #}
+          {% if state_attr("sensor." + sensorName, "period") %}
+            {% set begin = state_attr("sensor." + sensorName, "period")["Begin_timestamp"] %}
+            {{ as_datetime(begin).isoformat() }}
+          {% else %}
+            {{ 0 }}
+          {% endif %}
+          {# end of template #}
+        attributes:
+          period: >
+            {% if is_state('binary_sensor.porssari_json_prices', 'on') %}
+
+              {# Sensor settings for period length and hours to look for cheapest period #}
+              {% set period = 4 %}
+              {% set periodStartHour = 0 %}
+              {% set periodEndHour = 24 %}
+
+              {# Do not edit template below this line #}
+              {% if periodStartHour > periodEndHour %}
+                {% set periodStartHour = periodEndHour - period %}
+              {% endif %}
+              {% if periodEndHour > 24 %}
+                {% set periodEndHour = 24 %}
+              {% endif %}
+              {% if periodStartHour < 0 %}
+                {% set periodStartHour = 0 %}
+              {% endif %}
+              {% set timeStampList = state_attr("sensor.porssari_json_data", "Prices") | list %}
+              {% set ns = namespace(ts=[], tsPeriod=[], price=0, cheapestprice=999999, begin=0) %}
+              {% for item in timeStampList %}
+                {% if now().day == as_datetime(item).day %}
+                  {% set ns.ts = ns.ts + [item] %}
+                {% endif %}
+              {% endfor %}
+              {% for item in ns.ts if as_datetime(item).hour >= periodStartHour and as_datetime(item).hour <= periodEndHour - (period - 1) %}
+                {% set ns.price = 0 %} 
+                {% set ns.tsPeriod = [] %}
+                {% set begin = as_datetime(item) %}
+                {% set beginHour = begin.hour | int %}
+                {% set end = as_datetime(item) + timedelta( hours = period ) %}
+                {% if beginHour < (24 - period) %}
+                  {% for item in ns.ts if as_datetime(item) >= begin and as_datetime(item) < end %}
+                    {% set ns.tsPeriod = ns.tsPeriod + [item] %}
+                  {% endfor %}
+                  {% for item in ns.tsPeriod %}
+                    {% set t = item | string %}
+                    {% set ns.price = ns.price + state_attr("sensor.porssari_json_data", "Prices")[t]['Price'] | float %}   
+                  {% endfor %}
+                  {% if ns.price < ns.cheapestprice %}
+                    {% set ns.begin = begin.isoformat() %}
+                    {% set ns.cheapestprice = ns.price %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+              {% set res = {"Begin_timestamp": ns.begin, "Period_length": period, "Total_price": ns.cheapestprice | round(2), "Between": periodStartHour | string + " - " + periodEndHour | string} %} 
+              {{ res }}
+            {% else %}
+              {{ 0 }}
+            {% endif %}
+            {# end of template #}
+
+# Counter to control triggered switch to turn off
+counter:
+  # Name as you wish
+  water_heating_trigger: 
+    # Change initial value based on time in minutes to keep device on
+    initial: 240
+    step: 1
+
+automation:
+  - alias: Varaajan lämmityksen poiskytkentä
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: automation_reloaded
+      - platform: state
+        # Edit entity_id based on controlling switch
+        entity_id: switch.shellyplug_s_3ce90ed81792
+    action:
+      - choose:
+          # Edit is_state -switch based on controlling switch
+          - conditions: "{{ is_state('switch.shellyplug_s_3ce90ed81792', 'on') }}"
+            sequence:
+              - repeat:
+                  sequence:
+                    - delay: '00:01:00'
+                    - service: counter.decrement
+                      target:
+                        # Edit entity_id based on counter name above
+                        entity_id: counter.water_heating_trigger
+                  # Edit counter and switch names
+                  until: >
+                    {{ states('counter.water_heating_trigger') | int == 0 or is_state('switch.shellyplug_s_3ce90ed81792', 'off') }}
+              - service: switch.turn_off
+                target:
+                  # Edit entity_id based on controlling switch
+                  entity_id: switch.shellyplug_s_3ce90ed81792
+      - service: counter.reset
+        target:
+          # Edit entity_id based on counter name above
+          entity_id: counter.water_heating_trigger
+    mode: single
+    max_exceeded: silent
