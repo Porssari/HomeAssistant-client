@@ -16,7 +16,7 @@ rest:
         {% set timestamp = 0 %}
         {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
       {% endif %}  
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant-1.0-beta3&prices=true
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta3&prices=true
     scan_interval: 604800
     sensor:
       - name: "porssari_json"
@@ -34,23 +34,22 @@ rest:
           - Channel8
 
 # Is updated -state request from server
-command_line:
-  - sensor:
-      name: "porssari_request"
-      command: >-
-        curl -o /dev/null -qsI -w "%{http_code}\n" "
-        {%- set MAC = states('input_text.porssari_mac') if states('input_text.porssari_mac') | length > 5 else "HA_undefined" -%}
-        {%- if state_attr("sensor.porssari_json_data", "Metadata") -%}
-          {%- set timestamp = state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] -%}
-          {%- set fetch_url = state_attr("sensor.porssari_json_data", "Metadata")['Fetch_url'] -%}
-        {%- else -%}
-          {%- set timestamp = 0 -%}
-          {%- set fetch_url = "https://api.porssari.fi/getcontrols.php" -%}
-        {%- endif -%}
-        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta3"
-      scan_interval: 604800
-      value_template: "{{ value }}"
-
+#command_line:
+#  - sensor:
+#      name: "porssari_request"
+#      command: >-
+#        curl -o /dev/null -qsI -w "%{http_code}\n" "
+#        {%- set MAC = states('input_text.porssari_mac') if states('input_text.porssari_mac') | length > 5 else "HA_undefined" -%}
+#        {%- if state_attr("sensor.porssari_json_data", "Metadata") -%}
+#          {%- set timestamp = state_attr("sensor.porssari_json_data", "Metadata")['Timestamp'] -%}
+#          {%- set fetch_url = state_attr("sensor.porssari_json_data", "Metadata")['Fetch_url'] -%}
+#        {%- else -%}
+#          {%- set timestamp = 0 -%}
+#          {%- set fetch_url = "https://api.porssari.fi/getcontrols.php" -%}
+#        {%- endif -%}
+#        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta3"
+#      scan_interval: 604800
+#      value_template: "{{ value }}"
 
 template:
   # Sensors for Channel states.
@@ -192,30 +191,29 @@ automation:
     description: "Uusi ohjaustieto haetaan kun asetuksia on päivitetty tai tunnin välein"
     trigger:
       - platform: time_pattern
-        minutes: /2
-        seconds: 30
-    condition:
-      - condition: template
-        value_template: '{{ is_state("sensor.porssari_request", "200") }}'
-        alias: Päivitä vain kun serveri tarjoaa uutta jsonia
+        hours: /2
+    #condition:
+    #  - condition: template
+    #    value_template: '{{ is_state("sensor.porssari_request", "200") }}'
+    #    alias: Päivitä vain kun serveri tarjoaa uutta jsonia
     action:
       - delay: "{{ range(10, 30)|random }}"
       - service: homeassistant.update_entity
         alias: Päivitä porssari_json
         target:
           entity_id: sensor.porssari_json
-  - id: "porssari_request_automation"
-    alias: Pörssäri-request -sensorin päivitysautomaatio
-    description: "Päivitetään request-sensori 1,5-2,5min välein."
-    trigger:
-      - platform: time_pattern
-        minutes: /2
-    action:
-      - delay: "{{ range(10, 30)|random }}"
-      - service: homeassistant.update_entity
-        alias: Päivitä porssari_request
-        target:
-          entity_id: sensor.porssari_request
+  #- id: "porssari_request_automation"
+  #  alias: Pörssäri-request -sensorin päivitysautomaatio
+  #  description: "Päivitetään request-sensori 1,5-2,5min välein."
+  #  trigger:
+  #    - platform: time_pattern
+  #      minutes: /2
+  #  action:
+  #    - delay: "{{ range(10, 30)|random }}"
+  #    - service: homeassistant.update_entity
+  #      alias: Päivitä porssari_request
+  #      target:
+  #        entity_id: sensor.porssari_request
 
 # Settings parameters
 input_text:
