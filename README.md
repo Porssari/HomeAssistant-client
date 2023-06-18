@@ -1,11 +1,7 @@
 # HomeAssistant-client
 Pörssäri on mahdollista ottaa käyttöön myös Home Assistantin kautta. Home Assistant -laitteeseen lisätään automaattisesti 8 ohjauskanavaa. NordPoolin käyttöehtojen vuoksi käyttäjäkohtaista hintadataa ei ole pakettiin saatavilla.
 
-Testattu toimivaksi HAOS versio 10.2 ja HA Core 2023.5. Toimivuutta vanhemmilla versioilla ei ole varmistettu.
-
-Esimerkki käyttöliittymästä (lovelace/views_without_apexchart.yaml):
-
-![Example UI](/img/ui_example.png)
+Testattu toimivaksi HAOS versio 10.2 ja HA Core 2023.5 sekä 2023.6. Toimivuutta vanhemmilla versioilla ei ole varmistettu.
 
 ### Käyttöönotto
 Lisää porssari_core.yaml -tiedosto Home Assistantin config-hakemistoon
