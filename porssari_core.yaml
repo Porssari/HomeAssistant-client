@@ -23,7 +23,6 @@ rest:
         value_template: "{{ value_json.Metadata.Timestamp|default(0) }}"
         json_attributes:
           - Metadata
-          - Prices
           - Channel1
           - Channel2
           - Channel3
@@ -134,8 +133,6 @@ template:
         attributes:
           Metadata: >
             {{ state_attr("sensor.porssari_json", "Metadata") if state_attr("sensor.porssari_json", "Metadata") else state_attr("sensor.porssari_json_data", "Metadata") }}
-          Prices: >
-            {{ state_attr("sensor.porssari_json", "Prices") if state_attr("sensor.porssari_json", "Prices") else state_attr("sensor.porssari_json_data", "Prices") }}
           Channel1: >
             {{ state_attr("sensor.porssari_json", "Channel1") if state_attr("sensor.porssari_json", "Channel1") else state_attr("sensor.porssari_json_data", "Channel1") }}
           Channel2: >
@@ -166,18 +163,6 @@ template:
           {% else %}
             {{ false }}
           {% endif %}
-      - name: porssari_json_prices
-        state: >
-          {% set ns = namespace(pricesToday=[]) %}
-          {% if state_attr("sensor.porssari_json_data", "Prices") %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data", "Prices") | list %}
-            {% for item in timeStampList %}
-              {% if now().day == as_datetime(item).day %}
-                {% set ns.pricesToday = ns.pricesToday + [state_attr("sensor.porssari_json_data", "Prices")[item]['Price'] | float] %}
-              {% endif %}            
-            {% endfor %}
-          {% endif %}
-          {{ ns.pricesToday | length >= 23 }}
 
 # Update logic for json-sensor.
 automation:
