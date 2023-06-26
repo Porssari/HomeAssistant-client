@@ -16,6 +16,8 @@ views:
               - entity: sensor.porssari_dev_avg_today
                 name: Sähkön keskihinta tänään
                 secondary_info: last-updated
+              - entity: sensor.porssari_dev_price_today_sd
+                name: Keskihajonta tänään
               - entity: sensor.porssari_dev_avg_tomorrow
                 name: Sähkön keskihinta huomenna
                 secondary_info: last-updated
