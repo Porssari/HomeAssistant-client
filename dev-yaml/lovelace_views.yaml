@@ -124,6 +124,14 @@ views:
           - sensor.porssari_dev_channel_8_state
         title: Kanavaohjaushistoria
         hours_to_show: 24
+      - type: entities
+        entities:
+          - entity: binary_sensor.porssari_price_under_avg
+            name: Hinta alle keskiarvon
+          - entity: binary_sensor.porssari_price_under_avg_plus1sd
+            name: Hinta alle keskiarvo + 1SD
+          - entity: binary_sensor.porssari_price_under_avg_plus2sd
+            name: Hinta alle keskiarvo + 2SD
   - title: Asetukset
     path: asetukset
     badges: []
