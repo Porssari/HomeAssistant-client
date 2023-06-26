@@ -1,29 +1,17 @@
 # HomeAssistant-client
-Pörssäri on mahdollista ottaa käyttöön myös Home Assistantin kautta. Home Assistant -laitteeseen lisätään automaattisesti 8 ohjauskanavaa, ja lisäksi käyttäjäkohtainen hintadata tuodaan käyttöön tuntirankeineen.
+Pörssäri on mahdollista ottaa käyttöön myös Home Assistantin kautta. Home Assistant -laitteeseen lisätään automaattisesti 8 ohjauskanavaa. NordPoolin käyttöehtojen vuoksi käyttäjäkohtaista hintadataa ei ole pakettiin saatavilla.
 
-Testattu toimivaksi HAOS versio 10.2 ja HA Core 2023.5. Toimivuutta vanhemmilla versioilla ei ole varmistettu.
-
-Esimerkki käyttöliittymästä ApexChart -lisäosakortin kanssa (lovelace/views_apexchart.yaml), Apexcharts-card -asennusohjeet osoitteessa https://github.com/RomRider/apexcharts-card:
-
-![Example UI with apexchart](/img/hintatiedot_chart.png)
-
-![Example Controls](/img/ohjaustiedot.png)
-
-
-Esimerkki käyttöliittymästä ilman hintagraafia (lovelace/views_without_apexchart.yaml):
-
-![Example UI](/img/ui_example.png)
+Testattu toimivaksi HAOS versio 10.2 ja HA Core 2023.5 sekä 2023.6. Toimivuutta vanhemmilla versioilla ei ole varmistettu.
 
 ### Käyttöönotto
-Lisää porssari_core.yaml sekä porssari_sensors.yaml -tiedostot Home Assistantin config-hakemistoon
+Lisää porssari_core.yaml -tiedosto Home Assistantin config-hakemistoon
 
 Lisää seuraavat rivit configuration.yaml -tiedostoon:
 
 ```yaml
 homeassistant:  
   packages:    
-    porssari_core: !include porssari_core.yaml    
-    porssari_sensors: !include porssari_sensors.yaml
+    porssari_core: !include porssari_core.yaml
 ```
 
 Pörssäri-sivuston laitehallintaan lisätään laite "Home Assistant". Laitetta lisätessä sivustolla luodaan yksilöllinen laitetunnus (HAXXXXXXXXXX). Tämä laitetunnus tulee näkyviin Pörssäri-sivuston laitehallintaan kun laite on onnistuneesti lisätty.
@@ -44,31 +32,3 @@ Ohjausehtojen muokkaus suoritetaan toistaiseksi Pörssäri-sivuston laitehallinn
 Päivitetyt asetukset haetaan Home Assistantiin seuraavan palvelinkyselyn yhteydessä. Home Assistantista suoritetaan palvelinkysely Pörssärin rajapintaan 1,5 - 2,5 minuutin välein.
 
 Mikäli kanavalle ei ole määritetty ohjausparametreja Pörssäri-sivustolla, sensori saa arvon -1.
-
-
-### Hintatiedot
-Ohjaustiedon mukana toimitetaan myös käyttäjäkohtainen hintatieto. Esimerkki hintatiedon käytöstä löytyy porssari_sensors.yaml -tiedoston sensoreista.
-
-Käyttäjäkohtaiset hinta-asetukset tehdään Pörssäri-sivustolla. Lomake asetusten tekemiseen löytyy valikosta "Ohjaus - Hinta-asetukset". Toistaiseksi hinta-asetukset päivittyvät Home Assistantiin noin tunnin viiveellä mikäli ohjausasetuksia ei muuteta. Tähän asiaan tehdään korjaus kesäkuun 2023 aikana, minkä jälkeen myös hinta-asetusten muutos päivittyy jokaisen palvelinkyselyn yhteydessä.
-
-Esimerkki json-ohjausdatan rakenteesta hintatiedon osalta:
-
-```json
-"Prices": {
-  "2023-05-18T00:00:00+0300": {
-    "Price":"8.11",
-    "Rank_cheap":"5",
-    "Rank_Expensive":"18"
-  },
-  "2023-05-18T01:00:00+0300": {
-    "Price":"8.10",
-    "Rank_cheap":"4",
-    "Rank_Expensive":"19"
-  },
-  "2023-05-18T02:00:00+0300": {
-    "Price":"8.03",
-    "Rank_cheap":"2",
-    "Rank_Expensive":"21"
-  }
-}
-```
