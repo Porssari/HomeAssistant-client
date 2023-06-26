@@ -15,7 +15,7 @@ rest:
         {% set timestamp = 0 %}
         {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
       {% endif %}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta4&prices=true
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-rc1
     scan_interval: 604800
     sensor:
       - name: "porssari_json"
@@ -40,7 +40,7 @@ command_line:
         {%- set MAC = states("input_text.porssari_mac")|default("HA_undefined") -%}
         {%- set timestamp = state_attr("sensor.porssari_json_data", "Metadata")["Timestamp"]|default("0") -%}
         {%- set fetch_url = state_attr("sensor.porssari_json_data", "Metadata")["Fetch_url"]|default("https://api.porssari.fi/getcontrols.php") -%}
-        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-beta4"
+        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-rc1"
       scan_interval: 120
       value_template: "{{ value }}"
 
