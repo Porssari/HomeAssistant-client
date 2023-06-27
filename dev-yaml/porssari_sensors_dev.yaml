@@ -1,7 +1,7 @@
 template:
   # Pörssäri price sensors
   - sensor:
-      - name: porssari__dev_price_now
+      - name: porssari_dev_price_now
         unique_id: porssari_dev_price_now
         unit_of_measurement: "snt/kWh"
         device_class: monetary
@@ -142,8 +142,10 @@ template:
 
   - binary_sensor:
       - name: Porssari_dev_price_under_avg
-        state: '{{ states("sensor.porssari_dev_price_now") | int < states("sensor.porssari_dev_avg_today") | int }}'
+        state: '{{ states("sensor.porssari_dev_price_now") | float < states("sensor.porssari_dev_avg_today") | float }}'
       - name: Porssari_dev_price_under_avg_plus1SD  
-        state: '{{ states("sensor.porssari_dev_price_now") | int < (states("sensor.porssari_dev_avg_today") | int + states("sensor.porssari_dev_price_today_sd") | int ) }}'
+        state: '{{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + states("sensor.porssari_dev_price_today_sd") | float ) }}'
       - name: Porssari_dev_price_under_avg_plus2SD  
-        state: '{{ states("sensor.porssari_dev_price_now") | int < (states("sensor.porssari_dev_avg_today") | int + 2 * states("sensor.porssari_dev_price_today_sd") | int ) }}'
+        state: '{{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + 2 * states("sensor.porssari_dev_price_today_sd") | float ) }}'
+      - name: Porssari_dev_price_under_avg_minus1SD  
+        state: '{{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float - states("sensor.porssari_dev_price_today_sd") | float ) }}'
