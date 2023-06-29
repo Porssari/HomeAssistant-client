@@ -126,14 +126,28 @@ views:
           - sensor.porssari_dev_channel_8_state
         title: Kanavaohjaushistoria
         hours_to_show: 24
+  - title: Muut ohjaustiedot
+    path: muut-ohjaustiedot
+    badges: []
+    cards:
       - type: entities
         entities:
-          - entity: binary_sensor.porssari_price_under_avg
+          - entity: binary_sensor.porssari_dev_price_under_avg
             name: Hinta alle keskiarvon
-          - entity: binary_sensor.porssari_price_under_avg_plus1sd
+          - entity: sensor.porssari_dev_hours_under_sdfactor_0
+            name: Tunteja alle keskiarvon tänään
+          - entity: binary_sensor.porssari_dev_price_under_avg_plus1sd
             name: Hinta alle keskiarvo + 1SD
-          - entity: binary_sensor.porssari_price_under_avg_plus2sd
+          - entity: sensor.porssari_dev_hours_under_sdfactor_plus1
+            name: Tunteja alle keskiarvon + 1SD tänään
+          - entity: binary_sensor.porssari_dev_price_under_avg_plus2sd
             name: Hinta alle keskiarvo + 2SD
+          - entity: sensor.porssari_dev_hours_under_sdfactor_plus2
+            name: Tunteja alle keskiarvon + 2SD tänään
+          - entity: binary_sensor.porssari_dev_price_under_avg_minus1sd
+            name: Hinta alle keskiarvo - 1SD
+          - entity: sensor.porssari_dev_hours_under_sdfactor_minus1
+            name: Tunteja alle keskiarvon - 1SD tänään
   - title: Asetukset
     path: asetukset
     badges: []
