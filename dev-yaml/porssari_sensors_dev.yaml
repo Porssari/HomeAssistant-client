@@ -1,3 +1,10 @@
+################################################################
+# Pörssäri Home Assistant client sensors - DEVELOPMENT VERSION #
+#                                                              #
+# Do not use this file if you don't have access to             #
+# development features in Pörssäri service                     #
+################################################################
+
 template:
   # Pörssäri price sensors
   - sensor:
