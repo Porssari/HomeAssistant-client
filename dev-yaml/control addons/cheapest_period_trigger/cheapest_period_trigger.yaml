@@ -16,7 +16,7 @@ template:
           {# end of template #}
         attributes:
           period: >
-            {% if is_state('binary_sensor.porssari_json_prices', 'on') %}
+            {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
 
               {# Sensor settings for period length and hours to look for cheapest period #}
               {% set period = 4 %}
@@ -33,7 +33,7 @@ template:
               {% if periodStartHour < 0 %}
                 {% set periodStartHour = 0 %}
               {% endif %}
-              {% set timeStampList = state_attr("sensor.porssari_json_data", "Prices") | list %}
+              {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
               {% set ns = namespace(ts=[], tsPeriod=[], price=0, cheapestprice=999999, begin=0, end=0) %}
               {% for item in timeStampList %}
                 {% if now().day == as_datetime(item).day %}
@@ -53,7 +53,7 @@ template:
                   {% endfor %}
                   {% for item in ns.tsPeriod %}
                     {% set t = item | string %}
-                    {% set ns.price = ns.price + state_attr("sensor.porssari_json_data", "Prices")[t]['Price'] | float %}   
+                    {% set ns.price = ns.price + state_attr("sensor.porssari_json_data_dev", "Prices")[t]['Price'] | float %}   
                   {% endfor %}
                   {% if ns.price < ns.cheapestprice %}
                     {% set ns.begin = begin.isoformat() %}
