@@ -226,3 +226,23 @@ template:
             {% endif %}
           {% endfor %}
           {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+
+  - binary_sensor:
+    - name: Porssari_dev_rank_acceptable
+        state: >
+          {% set minHours = 0 %}
+          {% set maxHours = 24 %}
+          {% set sdFactor = 0 %}
+          {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
+          {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
+          {% set ns = namespace(hours=[]) %}
+          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+          {% for item in timeStampList %}
+            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float <= cutoffPrice %}
+              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+            {% endif %}
+          {% endfor %}
+          {% set maxRank = minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length %}
+          {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
+          {{ state_attr("sensor.porssari_json_data_dev", "Prices")[curHour]['Rank_cheap'] | int < maxRank }}
+          
