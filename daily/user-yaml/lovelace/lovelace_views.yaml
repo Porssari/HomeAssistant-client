@@ -1,0 +1,57 @@
+views:
+  - title: Pörssäri
+    badges: []
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.porssari_channel_1_state
+            name: Kanava 1
+            secondary_info: last-changed
+          - entity: sensor.porssari_channel_2_state
+            name: Kanava 2
+            secondary_info: last-changed
+          - entity: sensor.porssari_channel_3_state
+            name: Kanava 3
+            secondary_info: last-changed
+          - entity: sensor.porssari_channel_4_state
+            name: Kanava 4
+            secondary_info: last-changed
+          - entity: sensor.porssari_channel_5_state
+            name: Kanava 5
+            secondary_info: last-changed
+          - entity: sensor.porssari_channel_6_state
+            name: Kanava 6
+            secondary_info: last-changed
+          - entity: sensor.porssari_channel_7_state
+            name: Kanava 7
+            secondary_info: last-changed
+          - entity: sensor.porssari_channel_8_state
+            secondary_info: last-changed
+            name: Kanava 8
+        state_color: true
+        title: Pörssäri ohjaukset
+      - type: logbook
+        entities:
+          - sensor.porssari_channel_1_state
+          - sensor.porssari_channel_2_state
+          - sensor.porssari_channel_3_state
+          - sensor.porssari_channel_4_state
+          - sensor.porssari_channel_5_state
+          - sensor.porssari_channel_6_state
+          - sensor.porssari_channel_7_state
+          - sensor.porssari_channel_8_state
+        title: Kanavaohjaushistoria
+        hours_to_show: 24
+      - type: entities
+        entities:
+          - entity: input_text.porssari_mac
+          - entity: binary_sensor.porssari_json_controls
+            name: JSON-ohjaustieto käytettävissä
+            secondary_info: none
+          - entity: sensor.porssari_json_data
+            secondary_info: last-updated
+            name: JSON-aikaleima
+          - entity: sensor.porssari_request
+            name: Viimeisimmän kyselyn tila
+            secondary_info: none
+        title: Pörssäri asetukset
