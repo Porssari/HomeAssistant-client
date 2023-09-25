@@ -16,7 +16,7 @@ homeassistant:
 
 Pörssäri-sivuston laitehallintaan lisätään laite "Home Assistant". Laitetta lisätessä sivustolla luodaan yksilöllinen laitetunnus (HAXXXXXXXXXX). Tämä laitetunnus tulee näkyviin Pörssäri-sivuston laitehallintaan kun laite on onnistuneesti lisätty.
 
-Kyseinen laitetunnus lisätään Home Assistantissa input_text.porssari_mac -kentän arvoksi. Tämän jälkeen noin kahden minuutin kuluessa porssari_request-sensorin tulisi saada arvo 200 tai 304 merkkinä onnistuneesta palvelinkyselystä, ja puolen minuutin kuluessa tämän jälkeen muiden sensoreiden tulisi päivittyä. 
+Kyseinen laitetunnus lisätään Home Assistantiin reittiä Asetukset --> Laitteet ja palvelut --> Avustimet ja listasta valitaan "Pörssäri laitetunnus". Tämän jälkeen noin kahden minuutin kuluessa porssari_request-sensorin tulisi saada arvo 200 tai 304 merkkinä onnistuneesta palvelinkyselystä, ja puolen minuutin kuluessa tämän jälkeen muiden sensoreiden tulisi päivittyä. 
 
 Onnistuneen palvelinkyselyn seurauksena Pörssäri-sivuston laitehallinnan Viimeksi nähty -aikaleima päivittyy vastaamaan nykyistä ajanhetkeä.
 
