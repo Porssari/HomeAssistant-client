@@ -22,7 +22,7 @@ Sivustolla luotu laitetunnus lisätään Home Assistantiin reittiä Asetukset --
 
 Onnistuneen palvelinkyselyn seurauksena Pörssäri-sivuston laitehallinnan Viimeksi nähty -aikaleima päivittyy vastaamaan nykyistä ajanhetkeä.
 
-Yhteyskatkojen varalle on mahdollista ottaa käyttöön Telegram-viestisovellukseen integroitu yhteysvahti. Ohjeet tämän käyttöönottamiseksi löytyy osoitteesta https://porssari.fi/ohjeet/yhteysvahdin-kayttoonotto
+Yhteyskatkojen varalle on mahdollista ottaa käyttöön Telegram-viestisovellukseen integroitu yhteysvahti. Ohjeet tämän käyttöönottamiseksi löytyy osoitteesta https://docs.porssari.fi/yhteysvahti/ohjauslaitteen-yhteysvahti
 
 
 ### Ohjaus
