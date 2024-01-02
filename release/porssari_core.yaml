@@ -16,7 +16,7 @@ rest:
         {% set timestamp = 0 %}
         {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
       {% endif %}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-rc1&json_version=2
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-rc2&json_version=2
     scan_interval: 604800
     sensor:
       - name: "porssari_json"
@@ -34,8 +34,8 @@ command_line:
         {%- set MAC = states("input_text.porssari_mac")|default("HA_undefined") -%}
         {%- set timestamp = state_attr("sensor.porssari_json_data", "metadata")["timestamp"]|default("0") -%}
         {%- set fetch_url = state_attr("sensor.porssari_json_data", "metadata")["fetch_url"]|default("https://api.porssari.fi/getcontrols.php") -%}
-        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-rc1&headers=true"
-      scan_interval: 300
+        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-rc2&headers=true"
+      scan_interval: 604800
       value_template: "{{ value }}"
 
 template:
@@ -192,26 +192,30 @@ template:
 # Update logic for json-sensor.
 automation:
   - id: "porssari_update_automation"
-    alias: Pörssäri-ohjaustiedon päivitys
+    alias: porssari_update_json
     description: "Uusi ohjaustieto haetaan kun asetuksia on päivitetty tai tunnin välein"
     trigger:
       - platform: time_pattern
-        hours: /4
-      - platform: state
-        entity_id:
-          - sensor.porssari_request
+        minutes: /5
       - platform: homeassistant
         event: start
-    condition:
-      - condition: template
-        value_template: '{{ is_state("sensor.porssari_request", "200") }}'
-        alias: Päivitä vain kun serveri tarjoaa uutta jsonia
     action:
-      - delay: 15
+      - delay: '{{ range(30) | random }}'
       - service: homeassistant.update_entity
-        alias: Päivitä porssari_json
+        alias: update_porssari_request
         target:
-          entity_id: sensor.porssari_json
+          entity_id: sensor.porssari_request
+      - if:
+        - condition: state
+          entity_id: sensor.porssari_request
+          state: "200"
+        then:
+          - delay: 12
+          - service: homeassistant.update_entity
+            alias: update_porssari_json
+            target:
+              entity_id: sensor.porssari_json
+    mode: single
 
 # Settings parameters
 input_text:
