@@ -35,7 +35,7 @@ command_line:
         {%- set timestamp = state_attr("sensor.porssari_json_data", "metadata")["timestamp"]|default("0") -%}
         {%- set fetch_url = state_attr("sensor.porssari_json_data", "metadata")["fetch_url"]|default("https://api.porssari.fi/getcontrols.php") -%}
         {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-rc1&headers=true"
-      scan_interval: 600
+      scan_interval: 300
       value_template: "{{ value }}"
 
 template:
