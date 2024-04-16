@@ -17,7 +17,20 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
             {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Prices")[curHour]['Price'] | float }}
+            {{ state_attr("sensor.porssari_json_data_dev", "prices")[curHour]['price'] | float }}
+          {% else %}
+            {{ 0 }}
+          {% endif %}
+      - name: porssari_dev_price_now_eur
+        unique_id: porssari_dev_price_now_eir
+        unit_of_measurement: "eur/kWh"
+        device_class: monetary
+        attributes:
+          friendly_name: "Pörssäri dev sähkön hinta nyt (eur)"
+        state: >
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
+            {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
+            {{ state_attr("sensor.porssari_json_data_dev", "prices")[curHour]['price'] | float / 100 }}
           {% else %}
             {{ 0 }}
           {% endif %}
@@ -26,11 +39,11 @@ template:
         device_class: monetary
         state: >
           {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
             {% set ns = namespace(prices=[]) %}
             {% for item in timeStampList %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
               {% endif %}
             {% endfor %}
             {{ ns.prices | average | float | round(2) if ns.prices | length >= 23 else 0 }}
@@ -42,12 +55,12 @@ template:
         device_class: monetary
         state: >
           {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
             {% set tomorrow = now() + timedelta( days = 1 ) %}
             {% set ns = namespace(prices=[]) %}
             {% for item in timeStampList %}
               {% if tomorrow.day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
               {% endif %}
             {% endfor %}
             {{ ns.prices | average | float | round(2) if ns.prices | length >= 23 else 0 }}
@@ -59,11 +72,11 @@ template:
         device_class: monetary
         state: >
           {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
             {% set ns = namespace(prices=[]) %}
             {% for item in timeStampList %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
               {% endif %}
             {% endfor %}
             {{ ns.prices | min | float if ns.prices | length >= 23 else 0 }}
@@ -73,17 +86,17 @@ template:
         attributes:
           Hour: >
             {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-              {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+              {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
               {% set ns = namespace(ts=[], prices=[], hours=[]) %}
               {% for item in timeStampList %}
                 {% if now().day == as_datetime(item).day %}
                   {% set ns.ts = ns.ts + [item] %}
-                  {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+                  {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
                 {% endif %}
               {% endfor %}
               {% set pmin = ns.prices | min | float %}
               {% for item in ns.ts %}
-                {% if state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float == pmin %}
+                {% if state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float == pmin %}
                   {% set ns.hours = ns.hours + [as_datetime(item).hour | int] %}
                 {% endif %}
               {% endfor %}
@@ -96,11 +109,11 @@ template:
         device_class: monetary
         state: >
           {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
             {% set ns = namespace(prices=[]) %}
             {% for item in timeStampList %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
               {% endif %}
             {% endfor %}
             {{ ns.prices | max | float if ns.prices | length >= 23 else 0 }}
@@ -110,17 +123,17 @@ template:
         attributes:
           Hour: >
             {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-              {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+              {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
               {% set ns = namespace(ts=[], prices=[], hours=[]) %}
               {% for item in timeStampList %}
                 {% if now().day == as_datetime(item).day %}
                   {% set ns.ts = ns.ts + [item] %}
-                  {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+                  {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
                 {% endif %}
               {% endfor %}
               {% set pmin = ns.prices | max | float %}
               {% for item in ns.ts %}
-                {% if state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float == pmin %}
+                {% if state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float == pmin %}
                   {% set ns.hours = ns.hours + [as_datetime(item).hour | int] %}
                 {% endif %}
               {% endfor %}
@@ -131,11 +144,11 @@ template:
       - name: porssari_dev_price_today_sd
         state: >
           {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
             {% set ns = namespace(prices=[], values=[]) %}
             {% for item in timeStampList %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
               {% endif %}
             {% endfor %}
             {% set mean = ns.prices | average | float | round(2) %}
@@ -152,19 +165,19 @@ template:
         state: >
           {% set sdFactor = 0 %}
           {{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + sdFactor * states("sensor.porssari_dev_price_today_sd") | float) }}
-      - name: Porssari_dev_price_under_avg_plus1SD  
+      - name: Porssari_dev_price_under_avg_plus1SD
         state: >
           {% set sdFactor = 1 %}
           {{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + sdFactor * states("sensor.porssari_dev_price_today_sd") | float) }}
-      - name: Porssari_dev_price_under_avg_plus2SD  
+      - name: Porssari_dev_price_under_avg_plus2SD
         state: >
           {% set sdFactor = 2 %}
           {{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + sdFactor * states("sensor.porssari_dev_price_today_sd") | float) }}
-      - name: Porssari_dev_price_under_avg_minus1SD  
+      - name: Porssari_dev_price_under_avg_minus1SD
         state: >
           {% set sdFactor = -1 %}
           {{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + sdFactor * states("sensor.porssari_dev_price_today_sd") | float) }}
-      
+
   - sensor:
       - name: Porssari_dev_hours_under_sdfactor_0
         state: >
@@ -174,10 +187,10 @@ template:
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
           {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
           {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
           {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float <= cutoffPrice %}
+              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
             {% endif %}
           {% endfor %}
           {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
@@ -189,10 +202,10 @@ template:
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
           {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
           {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
           {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float <= cutoffPrice %}
+              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
             {% endif %}
           {% endfor %}
           {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
@@ -204,10 +217,10 @@ template:
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
           {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
           {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
           {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float <= cutoffPrice %}
+              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
             {% endif %}
           {% endfor %}
           {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
@@ -219,16 +232,16 @@ template:
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
           {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
           {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
           {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float <= cutoffPrice %}
+              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
             {% endif %}
           {% endfor %}
           {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
 
   - binary_sensor:
-    - name: Porssari_dev_rank_acceptable
+      - name: Porssari_dev_rank_acceptable
         state: >
           {% set minHours = 0 %}
           {% set maxHours = 24 %}
@@ -236,13 +249,12 @@ template:
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
           {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
           {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
           {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float <= cutoffPrice %}
+              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
             {% endif %}
           {% endfor %}
           {% set maxRank = minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length %}
           {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
-          {{ state_attr("sensor.porssari_json_data_dev", "Prices")[curHour]['Rank_cheap'] | int < maxRank }}
-          
+          {{ state_attr("sensor.porssari_json_data_dev", "prices")[curHour]['rank_cheap'] | int < maxRank }}
