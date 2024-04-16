@@ -65,9 +65,9 @@ views:
               let res = [];
 
               for (const [key, value] of
-              Object.entries(entity.attributes.Prices)) {
+              Object.entries(entity.attributes.prices)) {
                 let d = new Date(key).getTime();
-                let p = parseFloat(value.Price);
+                let p = parseFloat(value.price);
                 res.push([d, p]);
               }
 
@@ -148,6 +148,9 @@ views:
             name: Hinta alle keskiarvo - 1SD
           - entity: sensor.porssari_dev_hours_under_sdfactor_minus1
             name: Tunteja alle keskiarvon - 1SD tänään
+      - type: entity
+        entity: binary_sensor.porssari_dev_rank_acceptable
+        name: Tunti sallittu 0 SD
   - title: Asetukset
     path: asetukset
     badges: []
