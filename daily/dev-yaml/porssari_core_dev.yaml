@@ -12,29 +12,22 @@
 rest:
   - resource_template: >
       {% set MAC = states('input_text.porssari_mac_dev') if states('input_text.porssari_mac_dev') | length > 10 else "HA_undefined" %} 
-      {% if state_attr("sensor.porssari_json_data_dev", "Metadata") %}
-        {% set timestamp = state_attr("sensor.porssari_json_data_dev", "Metadata")['Timestamp'] %}
-        {% set fetch_url = state_attr("sensor.porssari_json_data_dev", "Metadata")['Fetch_url'] %}
+      {% if state_attr("sensor.porssari_json_data_dev", "metadata") %}
+        {% set timestamp = state_attr("sensor.porssari_json_data_dev", "metadata")['timestamp'] %}
+        {% set fetch_url = state_attr("sensor.porssari_json_data_dev", "metadata")['fetch_url'] %}
       {% else %}
         {% set timestamp = 0 %}
         {% set fetch_url = "https://dev.porssari.fi/getcontrols.php" %}
       {% endif %}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-dev&prices=true
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-dev&json_version=2&prices=true
     scan_interval: 604800
     sensor:
       - name: "porssari_json_dev"
-        value_template: "{{ value_json.Metadata.Timestamp|default(0) }}"
+        value_template: "{{ value_json.metadata.timestamp|default(0) }}"
         json_attributes:
-          - Metadata
-          - Prices
-          - Channel1
-          - Channel2
-          - Channel3
-          - Channel4
-          - Channel5
-          - Channel6
-          - Channel7
-          - Channel8
+          - metadata
+          - controls
+          - prices
 
 # Is updated -state request from server
 command_line:
@@ -43,84 +36,132 @@ command_line:
       command: >-
         curl -o /dev/null -qsI -w "%{http_code}\n" "
         {%- set MAC = states("input_text.porssari_mac_dev")|default("HA_undefined") -%}
-        {%- set timestamp = state_attr("sensor.porssari_json_data_dev", "Metadata")["Timestamp"]|default("0") -%}
-        {%- set fetch_url = state_attr("sensor.porssari_json_data_dev", "Metadata")["Fetch_url"]|default("https://dev.porssari.fi/getcontrols.php") -%}
-        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_1.0-dev"
-      scan_interval: 120
+        {%- set timestamp = state_attr("sensor.porssari_json_data_dev", "metadata")["timestamp"]|default("0") -%}
+        {%- set fetch_url = state_attr("sensor.porssari_json_data_dev", "metadata")["fetch_url"]|default("https://dev.porssari.fi/getcontrols.php") -%}
+        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-dev&headers=true"
+      scan_interval: 604800
       value_template: "{{ value }}"
 
 template:
   # Sensors for Channel states.
   - sensor:
-      - name: "Pörssäri Dev Channel 1 State"
+      - name: "porssari_dev_channel_1_state"
         unique_id: porssari_dev_ch1_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
-            {% set curHour = now().hour | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Channel1")[curHour] }}
+            {% set ns = namespace(state=-1) %}
+            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[0]["state"] %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[0]["schedules"] %}
+              {% if as_datetime(item.timestamp) < now() %}
+                {% set ns.state = item.state %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.state }}
           {% else %}
             {{ -1 }}
           {% endif %}
-      - name: "Pörssäri Dev Channel 2 State"
+      - name: "porssari_dev_channel_2_state"
         unique_id: porssari_dev_ch2_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
-            {% set curHour = now().hour | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Channel2")[curHour] }}
+            {% set ns = namespace(state=-1) %}
+            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[1]["state"] %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[1]["schedules"] %}
+              {% if as_datetime(item.timestamp) < now() %}
+                {% set ns.state = item.state %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.state }}
           {% else %}
             {{ -1 }}
           {% endif %}
-      - name: "Pörssäri Dev Channel 3 State"
+      - name: "porssari_dev_channel_3_state"
         unique_id: porssari_dev_ch3_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
-            {% set curHour = now().hour | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Channel3")[curHour] }}
+            {% set ns = namespace(state=-1) %}
+            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[2]["state"] %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[2]["schedules"] %}
+              {% if as_datetime(item.timestamp) < now() %}
+                {% set ns.state = item.state %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.state }}
           {% else %}
             {{ -1 }}
           {% endif %}
-      - name: "Pörssäri Dev Channel 4 State"
+      - name: "porssari_dev_channel_4_state"
         unique_id: porssari_dev_ch4_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
-            {% set curHour = now().hour | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Channel4")[curHour] }}
+            {% set ns = namespace(state=-1) %}
+            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[3]["state"] %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[3]["schedules"] %}
+              {% if as_datetime(item.timestamp) < now() %}
+                {% set ns.state = item.state %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.state }}
           {% else %}
             {{ -1 }}
           {% endif %}
-      - name: "Pörssäri Dev Channel 5 State"
+      - name: "porssari_dev_channel_5_state"
         unique_id: porssari_dev_ch5_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
-            {% set curHour = now().hour | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Channel5")[curHour] }}
+            {% set ns = namespace(state=-1) %}
+            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[4]["state"] %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[4]["schedules"] %}
+              {% if as_datetime(item.timestamp) < now() %}
+                {% set ns.state = item.state %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.state }}
           {% else %}
             {{ -1 }}
           {% endif %}
-      - name: "Pörssäri Dev Channel 6 State"
+      - name: "porssari_dev_channel_6_state"
         unique_id: porssari_dev_ch6_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
-            {% set curHour = now().hour | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Channel6")[curHour] }}
+            {% set ns = namespace(state=-1) %}
+            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[5]["state"] %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[5]["schedules"] %}
+              {% if as_datetime(item.timestamp) < now() %}
+                {% set ns.state = item.state %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.state }}
           {% else %}
             {{ -1 }}
           {% endif %}
-      - name: "Pörssäri Dev Channel 7 State"
+      - name: "porssari_dev_channel_7_state"
         unique_id: porssari_dev_ch7_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
-            {% set curHour = now().hour | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Channel7")[curHour] }}
+            {% set ns = namespace(state=-1) %}
+            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[6]["state"] %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[6]["schedules"] %}
+              {% if as_datetime(item.timestamp) < now() %}
+                {% set ns.state = item.state %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.state }}
           {% else %}
             {{ -1 }}
           {% endif %}
-      - name: "Pörssäri Dev Channel 8 State"
+      - name: "porssari_dev_channel_8_state"
         unique_id: porssari_dev_ch8_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
-            {% set curHour = now().hour | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Channel8")[curHour] }}
+            {% set ns = namespace(state=-1) %}
+            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[7]["state"] %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[7]["schedules"] %}
+              {% if as_datetime(item.timestamp) < now() %}
+                {% set ns.state = item.state %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.state }}
           {% else %}
             {{ -1 }}
           {% endif %}
@@ -129,54 +170,39 @@ template:
   - sensor:
       - name: porssari_json_data_dev
         state: >
-          {% if state_attr("sensor.porssari_json_data_dev", "Metadata") %}
-            {{ state_attr("sensor.porssari_json_data_dev", "Metadata")['Timestamp'] }}
+          {% if state_attr("sensor.porssari_json_data_dev", "metadata") %}
+            {{ state_attr("sensor.porssari_json_data_dev", "metadata")['timestamp'] }}
           {% else %}
             {{ 0 }}
           {% endif %}
         attributes:
-          Metadata: >
-            {{ state_attr("sensor.porssari_json_dev", "Metadata") if state_attr("sensor.porssari_json_dev", "Metadata") else state_attr("sensor.porssari_json_data_dev", "Metadata") }}
-          Prices: >
-            {{ state_attr("sensor.porssari_json_dev", "Prices") if state_attr("sensor.porssari_json_dev", "Prices") else state_attr("sensor.porssari_json_data_dev", "Prices") }}
-          Channel1: >
-            {{ state_attr("sensor.porssari_json_dev", "Channel1") if state_attr("sensor.porssari_json_dev", "Channel1") else state_attr("sensor.porssari_json_data_dev", "Channel1") }}
-          Channel2: >
-            {{ state_attr("sensor.porssari_json_dev", "Channel2") if state_attr("sensor.porssari_json_dev", "Channel2") else state_attr("sensor.porssari_json_data_dev", "Channel2") }}
-          Channel3: >
-            {{ state_attr("sensor.porssari_json_dev", "Channel3") if state_attr("sensor.porssari_json_dev", "Channel3") else state_attr("sensor.porssari_json_data_dev", "Channel3") }}
-          Channel4: >
-            {{ state_attr("sensor.porssari_json_dev", "Channel4") if state_attr("sensor.porssari_json_dev", "Channel4") else state_attr("sensor.porssari_json_data_dev", "Channel4") }}
-          Channel5: >
-            {{ state_attr("sensor.porssari_json_dev", "Channel5") if state_attr("sensor.porssari_json_dev", "Channel5") else state_attr("sensor.porssari_json_data_dev", "Channel5") }}
-          Channel6: >
-            {{ state_attr("sensor.porssari_json_dev", "Channel6") if state_attr("sensor.porssari_json_dev", "Channel6") else state_attr("sensor.porssari_json_data_dev", "Channel6") }}
-          Channel7: >
-            {{ state_attr("sensor.porssari_json_dev", "Channel7") if state_attr("sensor.porssari_json_dev", "Channel7") else state_attr("sensor.porssari_json_data_dev", "Channel7") }}
-          Channel8: >
-            {{ state_attr("sensor.porssari_json_dev", "Channel8") if state_attr("sensor.porssari_json_dev", "Channel8") else state_attr("sensor.porssari_json_data_dev", "Channel8") }}
+          metadata: >
+            {{ state_attr("sensor.porssari_json_dev", "metadata") if state_attr("sensor.porssari_json_dev", "metadata") else state_attr("sensor.porssari_json_data_dev", "metadata") }}
+          controls: >
+            {{ state_attr("sensor.porssari_json_dev", "controls") if state_attr("sensor.porssari_json_dev", "controls") else state_attr("sensor.porssari_json_data_dev", "controls") }}
+          prices: >
+            {{ state_attr("sensor.porssari_json_dev", "prices") if state_attr("sensor.porssari_json_dev", "controls") else state_attr("sensor.porssari_json_data_dev", "controls") }}
 
-  # Sensor to determine if json is valid for controls and contains price data
+  # Sensor to determine if json is valid for controls
   - binary_sensor:
       - name: porssari_json_controls_dev
         state: >
-          {% if state_attr("sensor.porssari_json_data_dev", "Metadata") %}
-            {% set timestamp = as_datetime(state_attr("sensor.porssari_json_data_dev", "Metadata")['Timestamp'] | int).strftime('%Y-%m-%dT%H:00:00%z') %}
-            {% set fromJson = utcnow().timestamp() - as_datetime(timestamp).timestamp() %}
-            {% set hoursCount = state_attr("sensor.porssari_json_data_dev", "Metadata")['Hours_count'] %}
-            {% set maxDiff = hoursCount * 3600 %}
-            {{ maxDiff - fromJson > 0 }}
+          {% if state_attr("sensor.porssari_json_data_dev", "metadata") %}
+            {% set validUntil = as_datetime(state_attr("sensor.porssari_json_data_dev", "metadata")['valid_until'] | int).timestamp() %}
+            {% set timestampNow = utcnow().timestamp() %}
+            {{ timestampNow < validUntil }}
           {% else %}
             {{ false }}
           {% endif %}
+
       - name: porssari_json_prices_dev
         state: >
           {% set ns = namespace(pricesToday=[]) %}
-          {% if state_attr("sensor.porssari_json_data_dev", "Prices") %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "Prices") | list %}
+          {% if state_attr("sensor.porssari_json_data_dev", "prices") %}
+            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
             {% for item in timeStampList %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.pricesToday = ns.pricesToday + [state_attr("sensor.porssari_json_data_dev", "Prices")[item]['Price'] | float] %}
+                {% set ns.pricesToday = ns.pricesToday + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
               {% endif %}            
             {% endfor %}
           {% endif %}
@@ -185,26 +211,30 @@ template:
 # Update logic for json-sensor.
 automation:
   - id: "porssari_dev_update_automation"
-    alias: Pörssäri-dev -ohjaustiedon päivitys
+    alias: porssari_dev_update_json
     description: "Uusi ohjaustieto haetaan kun asetuksia on päivitetty tai tunnin välein"
     trigger:
       - platform: time_pattern
-        hours: /1
-      - platform: state
-        entity_id:
-          - sensor.porssari_request_dev
+        minutes: /5
       - platform: homeassistant
         event: start
-    condition:
-      - condition: template
-        value_template: '{{ is_state("sensor.porssari_request_dev", "200") }}'
-        alias: Päivitä vain kun serveri tarjoaa uutta jsonia
     action:
-      - delay: 15
+      - delay: "{{ range(30) | random }}"
       - service: homeassistant.update_entity
-        alias: Päivitä porssari_json_dev
+        alias: update_porssari_request_dev
         target:
-          entity_id: sensor.porssari_json_dev
+          entity_id: sensor.porssari_request_dev
+      - if:
+          - condition: state
+            entity_id: sensor.porssari_request_dev
+            state: "200"
+        then:
+          - delay: 12
+          - service: homeassistant.update_entity
+            alias: update_porssari_json_dev
+            target:
+              entity_id: sensor.porssari_json_dev
+    mode: single
 
 # Settings parameters
 input_text:
