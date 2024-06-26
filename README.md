@@ -1,7 +1,7 @@
 # HomeAssistant-client
 Pörssäri on mahdollista ottaa käyttöön myös Home Assistantin kautta. Home Assistant -laitteeseen lisätään automaattisesti 8 ohjauskanavaa. NordPoolin käyttöehtojen vuoksi käyttäjäkohtaista hintadataa ei ole pakettiin saatavilla.
 
-Testattu toimivaksi HAOS versio 10.2-11.3 ja HA Core 2023.5-2024.1. Toimivuutta vanhemmilla versioilla ei ole varmistettu.
+Testattu toimivaksi HAOS versio 10.2-12.4 ja HA Core 2023.5-2024.6. Toimivuutta vanhemmilla versioilla ei ole varmistettu.
 
 ### Käyttöönotto
 Pörssäri-sivuston laitehallintaan lisätään laite "Home Assistant". Laitetta lisätessä sivustolla luodaan yksilöllinen laitetunnus (HAXXXXXXXXXX). Tämä laitetunnus tulee näkyviin Pörssäri-sivuston laitehallintaan kun laite on onnistuneesti lisätty.
