@@ -45,7 +45,7 @@ template:
               {% set ns.curTemp = state_attr(tempSensor, tempSensorAttribute) | float %}
             {% endif %}
 
-            {# Extrapolate CoP at current temperature based on config values #}
+            {# Interpolation of CoP at current temperature based on config values #}
             {# Return lowest or highest value if temperature is outside config points, otherwise count cop based on values around current temp #}
             {% if state_attr(tempSensor, tempSensorAttribute) < CoPTemperatures[0][0] %}
               {% set ns.curCoP = CoPTemperatures[0][1] | float %}
