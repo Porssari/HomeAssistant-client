@@ -1,0 +1,75 @@
+template:
+  - binary_sensor:
+      - name: testisensori
+        state: >
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
+            
+            {# Settings #}
+            
+            {# Sensor for current temperature #}
+            {% set tempSensor = "weather.forecast_koti" %}
+
+            {# Set tempSensorAttribute to "none" if current temperature is state of tempSensor #}
+            {% set tempSensorAttribute = "temperature" %}
+            
+            {# Sensor that contains current electricity price as sensor state #}
+            {% set priceSensor = "sensor.porssari_dev_price_now" %}
+            
+            {# Price for alternate energy/MWh #}
+            {% set altEnergyPrice = 78.82 %}
+
+            {# Offset for electricity price (snt) #}
+            {% set controlOffset = 1.0 %}
+            
+            {# CoP-temperature -points, form: [temp, cop] #}
+            {% set CoPTemperatures = [
+              [-30, 1.80],
+              [-25, 1.82],
+              [-20, 2.10],
+              [-15, 2.36],
+              [-10, 2.60],
+              [-5, 3.19],
+              [0, 4.21],
+              [5, 5.10],
+              [10, 4.50]
+            ]%}
+
+            {# Do not edit template below this line #}
+            {# Namespace for values #}
+            {% set ns = namespace(curTemp=0.0, curCoP=1.0, xMinPoint=[], xMaxPoint=[]) %}
+
+            {# Get current temperature #}
+            {% if tempSensorAttribute == "none" %}
+              {% set ns.curTemp = states(tempSensor) | float %}
+            {% else %}
+              {% set ns.curTemp = state_attr(tempSensor, tempSensorAttribute) | float %}
+            {% endif %}
+
+            {# Extrapolate CoP at current temperature based on config values #}
+            {# Return lowest or highest value if temperature is outside config points, otherwise count cop based on values around current temp #}
+            {% if state_attr(tempSensor, tempSensorAttribute) < CoPTemperatures[0][0] %}
+              {% set ns.curCoP = CoPTemperatures[0][1] | float %}
+            {% elif state_attr(tempSensor, tempSensorAttribute) > CoPTemperatures[CoPTemperatures|length - 1][0] %}
+              {% set ns.curCoP = CoPTemperatures[CoPTemperatures|length - 1][1] | float %}
+            {% else %}
+              {% for temp in CoPTemperatures %}
+                {% if temp[0] <= ns.curTemp %}
+                  {% set ns.xMinPoint = temp %}
+                {% endif %}
+                {% if temp[0] >= ns.curTemp and ns.xMaxPoint|length == 0 %}
+                  {% set ns.xMaxPoint = temp %}
+                {% endif %}
+              {% endfor %}
+              {% set xDivider = ns.xMaxPoint[0] - ns.xMinPoint[0] %}
+              {% set ns.curCoP = ns.xMinPoint[1] + ((ns.xMaxPoint[1] - ns.xMinPoint[1]) / xDivider) * (ns.curTemp - ns.xMinPoint[0]) %}
+            {% endif %}
+
+            {# Calculate cost for producing 1MWh energy with heatpump with current cop and electricity price #}
+            {% set consumption = 1000 / ns.curCoP %}
+            {% set energyCost = (consumption * (states(priceSensor)|float + controlOffset)) / 100 %}
+
+            {# Check condition if energy cost with heatpump is less than alternate energy price #}
+            {{ energyCost < altEnergyPrice }}
+          {% else %}
+            {{ false }}
+          {% endif %}
