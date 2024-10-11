@@ -40,9 +40,9 @@ template:
 
             {# Get current temperature #}
             {% if tempSensorAttribute == "none" %}
-              {% set ns.curTemp = states(tempSensor) | float %}
+              {% set ns.curTemp = states(tempSensor) | int %}
             {% else %}
-              {% set ns.curTemp = state_attr(tempSensor, tempSensorAttribute) | float %}
+              {% set ns.curTemp = state_attr(tempSensor, tempSensorAttribute) | int %}
             {% endif %}
 
             {# Interpolation of CoP at current temperature based on config values #}
