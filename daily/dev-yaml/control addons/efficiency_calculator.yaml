@@ -60,8 +60,12 @@ template:
                   {% set ns.xMaxPoint = temp %}
                 {% endif %}
               {% endfor %}
-              {% set xDivider = ns.xMaxPoint[0] - ns.xMinPoint[0] %}
-              {% set ns.curCoP = ns.xMinPoint[1] + ((ns.xMaxPoint[1] - ns.xMinPoint[1]) / xDivider) * (ns.curTemp - ns.xMinPoint[0]) %}
+              {% if ns.xMaxPoint[0] == ns.xMinPoint[0] %}
+                {% set ns.curCoP = ns.xMaxPoint[1] %}
+              {% else %}
+                {% set xDivider = ns.xMaxPoint[0] - ns.xMinPoint[0] %}
+                {% set ns.curCoP = ns.xMinPoint[1] + ((ns.xMaxPoint[1] - ns.xMinPoint[1]) / xDivider) * (ns.curTemp - ns.xMinPoint[0]) %}
+              {% endif %}
             {% endif %}
 
             {# Calculate cost for producing 1MWh energy with heatpump with current cop and electricity price #}
