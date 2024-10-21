@@ -16,7 +16,7 @@ rest:
         {% set timestamp = 0 %}
         {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
       {% endif %}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-rc2&json_version=2
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0&json_version=2
     scan_interval: 604800
     sensor:
       - name: "porssari_json"
@@ -34,7 +34,7 @@ command_line:
         {%- set MAC = states("input_text.porssari_mac")|default("HA_undefined") -%}
         {%- set timestamp = state_attr("sensor.porssari_json_data", "metadata")["timestamp"]|default("0") -%}
         {%- set fetch_url = state_attr("sensor.porssari_json_data", "metadata")["fetch_url"]|default("https://api.porssari.fi/getcontrols.php") -%}
-        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0-rc2&headers=true"
+        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0&headers=true"
       scan_interval: 604800
       value_template: "{{ value }}"
 
@@ -46,10 +46,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data", "controls")[0]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data", "controls")[0]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data", "controls") %}
+              {% if item.id == '1' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -61,10 +65,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data", "controls")[1]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data", "controls")[1]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data", "controls") %}
+              {% if item.id == '2' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -76,10 +84,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data", "controls")[2]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data", "controls")[2]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data", "controls") %}
+              {% if item.id == '3' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -91,10 +103,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data", "controls")[3]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data", "controls")[3]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data", "controls") %}
+              {% if item.id == '4' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -106,10 +122,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data", "controls")[4]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data", "controls")[4]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data", "controls") %}
+              {% if item.id == '5' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -121,10 +141,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data", "controls")[5]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data", "controls")[5]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data", "controls") %}
+              {% if item.id == '6' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -136,10 +160,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data", "controls")[6]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data", "controls")[6]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data", "controls") %}
+              {% if item.id == '7' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -151,10 +179,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data", "controls")[7]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data", "controls")[7]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data", "controls") %}
+              {% if item.id == '8' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -200,15 +232,15 @@ automation:
       - platform: homeassistant
         event: start
     action:
-      - delay: '{{ range(30) | random }}'
+      - delay: "{{ range(30) | random }}"
       - service: homeassistant.update_entity
         alias: update_porssari_request
         target:
           entity_id: sensor.porssari_request
       - if:
-        - condition: state
-          entity_id: sensor.porssari_request
-          state: "200"
+          - condition: state
+            entity_id: sensor.porssari_request
+            state: "200"
         then:
           - delay: 12
           - service: homeassistant.update_entity
