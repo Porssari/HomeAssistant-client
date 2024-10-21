@@ -50,10 +50,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[0]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[0]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls") %}
+              {% if item.id == '1' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -65,10 +69,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[1]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[1]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls") %}
+              {% if item.id == '2' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -80,10 +88,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[2]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[2]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls") %}
+              {% if item.id == '3' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -95,10 +107,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[3]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[3]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls") %}
+              {% if item.id == '4' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -110,10 +126,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[4]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[4]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls") %}
+              {% if item.id == '5' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -125,10 +145,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[5]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[5]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls") %}
+              {% if item.id == '6' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -140,10 +164,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[6]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[6]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls") %}
+              {% if item.id == '7' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
@@ -155,10 +183,14 @@ template:
         state: >
           {% if is_state('binary_sensor.porssari_json_controls_dev', 'on') %}
             {% set ns = namespace(state=-1) %}
-            {% set ns.state = state_attr("sensor.porssari_json_data_dev", "controls")[7]["state"] %}
-            {% for item in state_attr("sensor.porssari_json_data_dev", "controls")[7]["schedules"] %}
-              {% if as_datetime(item.timestamp) < now() %}
+            {% for item in state_attr("sensor.porssari_json_data_dev", "controls") %}
+              {% if item.id == '8' %}
                 {% set ns.state = item.state %}
+                {% for schedule in item.schedules %}
+                  {% if as_datetime(schedule.timestamp) < now() %}
+                    {% set ns.state = schedule.state %}
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {{ ns.state }}
