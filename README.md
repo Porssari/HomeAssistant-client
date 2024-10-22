@@ -33,4 +33,4 @@ Ohjausehtojen muokkaus suoritetaan toistaiseksi Pörssäri-sivuston ohjausasetus
 
 Päivitetyt asetukset haetaan Home Assistantiin seuraavan palvelinkyselyn yhteydessä. Home Assistantista suoritetaan palvelinkysely Pörssärin rajapintaan 4,5 - 5,5 minuutin välein.
 
-Mikäli kanavalle ei ole määritetty ohjausparametreja Pörssäri-sivustolla, sensori saa arvon -1.
+Mikäli kanavalle ei ole määritetty kuormaliitosta Pörssäri-sivustolla, sensori saa arvon -1.
