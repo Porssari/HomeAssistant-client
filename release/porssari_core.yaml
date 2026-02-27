@@ -193,6 +193,294 @@ template:
           {% else %}
             {{ -1 }}
           {% endif %}
+      - name: "Pörssäri Channel 1 on hours"
+        unique_id: porssari_ch1_on_hours
+        state: >
+          {% set ch = '1' %}
+          {% set controls = state_attr('sensor.porssari_json_data', 'controls') %}
+
+          {% if not controls %}
+            JSON-data ei saatavilla
+          {% else %}
+            {% set channel = controls | selectattr('id','equalto',ch) | first %}
+            {% if not channel %}
+              Id: {{ ch }} ei löydy
+            {% elif not channel.schedules %}
+              Ei ajastuksia
+            {% else %}
+
+              {% set sorted = channel.schedules | sort(attribute='timestamp') %}
+
+              {% for s in sorted[:4] %}
+                {% set t = s.timestamp | int %}
+                {% if (t % 900) >= 450 %}
+                  {% set r = ((t // 900) + 1) * 900 %}
+                {% else %}
+                  {% set r = (t // 900) * 900 %}
+                {% endif %}
+
+                {% if s.state == '1' %}
+                  {{ r | timestamp_custom('%H:%M') }}
+                {% elif s.state == '0' %}
+                  {{ '−' ~ (r | timestamp_custom('%H:%M,')) }}
+                {% endif %}
+                {% if not loop.last %} {% endif %}
+              {% endfor %}
+
+            {% endif %}
+          {% endif %}
+      - name: "Pörssäri Channel 2 on hours"
+        unique_id: porssari_ch2_on_hours
+        state: >
+          {% set ch = '2' %}
+          {% set controls = state_attr('sensor.porssari_json_data', 'controls') %}
+
+          {% if not controls %}
+            JSON-data ei saatavilla
+          {% else %}
+            {% set channel = controls | selectattr('id','equalto',ch) | first %}
+            {% if not channel %}
+              Id: {{ ch }} ei löydy
+            {% elif not channel.schedules %}
+              Ei ajastuksia
+            {% else %}
+
+              {% set sorted = channel.schedules | sort(attribute='timestamp') %}
+
+              {% for s in sorted[:4] %}
+                {% set t = s.timestamp | int %}
+                {% if (t % 900) >= 450 %}
+                  {% set r = ((t // 900) + 1) * 900 %}
+                {% else %}
+                  {% set r = (t // 900) * 900 %}
+                {% endif %}
+
+                {% if s.state == '1' %}
+                  {{ r | timestamp_custom('%H:%M') }}
+                {% elif s.state == '0' %}
+                  {{ '−' ~ (r | timestamp_custom('%H:%M,')) }}
+                {% endif %}
+                {% if not loop.last %} {% endif %}
+              {% endfor %}
+
+            {% endif %}
+          {% endif %}
+      - name: "Pörssäri Channel 3 on hours"
+        unique_id: porssari_ch3_on_hours
+        state: >
+          {% set ch = '3' %}
+          {% set controls = state_attr('sensor.porssari_json_data', 'controls') %}
+
+          {% if not controls %}
+            JSON-data ei saatavilla
+          {% else %}
+            {% set channel = controls | selectattr('id','equalto',ch) | first %}
+            {% if not channel %}
+              Id: {{ ch }} ei löydy
+            {% elif not channel.schedules %}
+              Ei ajastuksia
+            {% else %}
+
+              {% set sorted = channel.schedules | sort(attribute='timestamp') %}
+
+              {% for s in sorted[:4] %}
+                {% set t = s.timestamp | int %}
+                {% if (t % 900) >= 450 %}
+                  {% set r = ((t // 900) + 1) * 900 %}
+                {% else %}
+                  {% set r = (t // 900) * 900 %}
+                {% endif %}
+
+                {% if s.state == '1' %}
+                  {{ r | timestamp_custom('%H:%M') }}
+                {% elif s.state == '0' %}
+                  {{ '−' ~ (r | timestamp_custom('%H:%M,')) }}
+                {% endif %}
+                {% if not loop.last %} {% endif %}
+              {% endfor %}
+
+            {% endif %}
+          {% endif %}
+      - name: "Pörssäri Channel 4 on hours"
+        unique_id: porssari_ch4_on_hours
+        state: >
+          {% set ch = '4' %}
+          {% set controls = state_attr('sensor.porssari_json_data', 'controls') %}
+
+          {% if not controls %}
+            JSON-data ei saatavilla
+          {% else %}
+            {% set channel = controls | selectattr('id','equalto',ch) | first %}
+            {% if not channel %}
+              Id: {{ ch }} ei löydy
+            {% elif not channel.schedules %}
+              Ei ajastuksia
+            {% else %}
+
+              {% set sorted = channel.schedules | sort(attribute='timestamp') %}
+
+              {% for s in sorted[:4] %}
+                {% set t = s.timestamp | int %}
+                {% if (t % 900) >= 450 %}
+                  {% set r = ((t // 900) + 1) * 900 %}
+                {% else %}
+                  {% set r = (t // 900) * 900 %}
+                {% endif %}
+
+                {% if s.state == '1' %}
+                  {{ r | timestamp_custom('%H:%M') }}
+                {% elif s.state == '0' %}
+                  {{ '−' ~ (r | timestamp_custom('%H:%M,')) }}
+                {% endif %}
+                {% if not loop.last %} {% endif %}
+              {% endfor %}
+
+            {% endif %}
+          {% endif %}
+      - name: "Pörssäri Channel 5 on hours"
+        unique_id: porssari_ch5_on_hours
+        state: >
+          {% set ch = '5' %}
+          {% set controls = state_attr('sensor.porssari_json_data', 'controls') %}
+
+          {% if not controls %}
+            JSON-data ei saatavilla
+          {% else %}
+            {% set channel = controls | selectattr('id','equalto',ch) | first %}
+            {% if not channel %}
+              Id: {{ ch }} ei löydy
+            {% elif not channel.schedules %}
+              Ei ajastuksia
+            {% else %}
+
+              {% set sorted = channel.schedules | sort(attribute='timestamp') %}
+
+              {% for s in sorted[:4] %}
+                {% set t = s.timestamp | int %}
+                {% if (t % 900) >= 450 %}
+                  {% set r = ((t // 900) + 1) * 900 %}
+                {% else %}
+                  {% set r = (t // 900) * 900 %}
+                {% endif %}
+
+                {% if s.state == '1' %}
+                  {{ r | timestamp_custom('%H:%M') }}
+                {% elif s.state == '0' %}
+                  {{ '−' ~ (r | timestamp_custom('%H:%M,')) }}
+                {% endif %}
+                {% if not loop.last %} {% endif %}
+              {% endfor %}
+
+            {% endif %}
+          {% endif %}
+      - name: "Pörssäri Channel 6 on hours"
+        unique_id: porssari_ch6_on_hours
+        state: >
+          {% set ch = '6' %}
+          {% set controls = state_attr('sensor.porssari_json_data', 'controls') %}
+
+          {% if not controls %}
+            JSON-data ei saatavilla
+          {% else %}
+            {% set channel = controls | selectattr('id','equalto',ch) | first %}
+            {% if not channel %}
+              Id: {{ ch }} ei löydy
+            {% elif not channel.schedules %}
+              Ei ajastuksia
+            {% else %}
+
+              {% set sorted = channel.schedules | sort(attribute='timestamp') %}
+
+              {% for s in sorted[:4] %}
+                {% set t = s.timestamp | int %}
+                {% if (t % 900) >= 450 %}
+                  {% set r = ((t // 900) + 1) * 900 %}
+                {% else %}
+                  {% set r = (t // 900) * 900 %}
+                {% endif %}
+
+                {% if s.state == '1' %}
+                  {{ r | timestamp_custom('%H:%M') }}
+                {% elif s.state == '0' %}
+                  {{ '−' ~ (r | timestamp_custom('%H:%M,')) }}
+                {% endif %}
+                {% if not loop.last %} {% endif %}
+              {% endfor %}
+
+            {% endif %}
+          {% endif %}
+      - name: "Pörssäri Channel 7 on hours"
+        unique_id: porssari_ch7_on_hours
+        state: >
+          {% set ch = '7' %}
+          {% set controls = state_attr('sensor.porssari_json_data', 'controls') %}
+
+          {% if not controls %}
+            JSON-data ei saatavilla
+          {% else %}
+            {% set channel = controls | selectattr('id','equalto',ch) | first %}
+            {% if not channel %}
+              Id: {{ ch }} ei löydy
+            {% elif not channel.schedules %}
+              Ei ajastuksia
+            {% else %}
+
+              {% set sorted = channel.schedules | sort(attribute='timestamp') %}
+
+              {% for s in sorted[:4] %}
+                {% set t = s.timestamp | int %}
+                {% if (t % 900) >= 450 %}
+                  {% set r = ((t // 900) + 1) * 900 %}
+                {% else %}
+                  {% set r = (t // 900) * 900 %}
+                {% endif %}
+
+                {% if s.state == '1' %}
+                  {{ r | timestamp_custom('%H:%M') }}
+                {% elif s.state == '0' %}
+                  {{ '−' ~ (r | timestamp_custom('%H:%M,')) }}
+                {% endif %}
+                {% if not loop.last %} {% endif %}
+              {% endfor %}
+
+            {% endif %}
+          {% endif %}
+      - name: "Pörssäri Channel 8 on hours"
+        unique_id: porssari_ch8_on_hours
+        state: >
+          {% set ch = '8' %}
+          {% set controls = state_attr('sensor.porssari_json_data', 'controls') %}
+
+          {% if not controls %}
+            JSON-data ei saatavilla
+          {% else %}
+            {% set channel = controls | selectattr('id','equalto',ch) | first %}
+            {% if not channel %}
+              Id: {{ ch }} ei löydy
+            {% elif not channel.schedules %}
+              Ei ajastuksia
+            {% else %}
+
+              {% set sorted = channel.schedules | sort(attribute='timestamp') %}
+
+              {% for s in sorted[:4] %}
+                {% set t = s.timestamp | int %}
+                {% if (t % 900) >= 450 %}
+                  {% set r = ((t // 900) + 1) * 900 %}
+                {% else %}
+                  {% set r = (t // 900) * 900 %}
+                {% endif %}
+
+                {% if s.state == '1' %}
+                  {{ r | timestamp_custom('%H:%M') }}
+                {% elif s.state == '0' %}
+                  {{ '−' ~ (r | timestamp_custom('%H:%M,')) }}
+                {% endif %}
+                {% if not loop.last %} {% endif %}
+              {% endfor %}
+
+            {% endif %}
+          {% endif %}
 
   # Sensor to save request json data.
   - sensor:
@@ -220,6 +508,8 @@ template:
           {% else %}
             {{ false }}
           {% endif %}
+
+
 
 # Update logic for json-sensor.
 automation:

@@ -33,13 +33,21 @@ views:
       - type: logbook
         entities:
           - sensor.porssari_channel_1_state
+          - sensor.porssari_channel_1_on_hours
           - sensor.porssari_channel_2_state
+          - sensor.porssari_channel_2_on_hours
           - sensor.porssari_channel_3_state
+          - sensor.porssari_channel_3_on_hours
           - sensor.porssari_channel_4_state
+          - sensor.porssari_channel_4_on_hours
           - sensor.porssari_channel_5_state
+          - sensor.porssari_channel_5_on_hours
           - sensor.porssari_channel_6_state
+          - sensor.porssari_channel_6_on_hours
           - sensor.porssari_channel_7_state
+          - sensor.porssari_channel_7_on_hours
           - sensor.porssari_channel_8_state
+          - sensor.porssari_channel_8_on_hours
         title: Kanavaohjaushistoria
         hours_to_show: 24
       - type: entities
