@@ -6,9 +6,12 @@
 # Add "Pörssäri laitetunnus" via Settings --> Devices & Services --> Helpers
 
 # JSON-request from server
-rest:
-  - resource_template: >
-      {% set MAC = states('input_text.porssari_mac') if states('input_text.porssari_mac') | length > 10 else "HA_undefined" %} 
+# One conditional GET replaces the old HEAD/curl check + separate JSON fetch.
+# HTTP 200 updates the stored JSON. HTTP 304 keeps the previous state and attributes.
+rest_command:
+  porssari_fetch_json:
+    url: >-
+      {% set MAC = states('input_text.porssari_mac') if states('input_text.porssari_mac') | length > 10 else "HA_undefined" %}
       {% if state_attr("sensor.porssari_json_data", "metadata") %}
         {% set timestamp = state_attr("sensor.porssari_json_data", "metadata")['timestamp'] %}
         {% set fetch_url = state_attr("sensor.porssari_json_data", "metadata")['fetch_url'] %}
@@ -16,32 +19,60 @@ rest:
         {% set timestamp = 0 %}
         {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
       {% endif %}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0&json_version=2
-    scan_interval: 604800
-    sensor:
-      - name: "porssari_json"
-        value_template: "{{ value_json.metadata.timestamp|default(0) }}"
-        json_attributes:
-          - metadata
-          - controls
-
-# Is updated -state request from server
-command_line:
-  - sensor:
-      name: "porssari_request"
-      command: >-
-        curl -o /dev/null -qsI -w "%{http_code}\n" "
-        {%- set MAC = states("input_text.porssari_mac")|default("HA_undefined") -%}
-        {%- set timestamp = state_attr("sensor.porssari_json_data", "metadata")["timestamp"]|default("0") -%}
-        {%- set fetch_url = state_attr("sensor.porssari_json_data", "metadata")["fetch_url"]|default("https://api.porssari.fi/getcontrols.php") -%}
-        {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.0&headers=true"
-      scan_interval: 604800
-      value_template: "{{ value }}"
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.1&json_version=2
+    method: GET
 
 template:
+  # Fetch and persist JSON data. The trigger-based template sensor restores its
+  # previous state across restarts. A 304 response therefore causes no data loss.
+  - triggers:
+      - trigger: time_pattern
+        minutes: /5
+      - trigger: homeassistant
+        event: start
+    actions:
+      - delay: "{{ range(30) | random }}"
+      - action: rest_command.porssari_fetch_json
+        response_variable: porssari_response
+      - variables:
+          porssari_data: >-
+            {% if porssari_response.status == 200 %}
+              {% if porssari_response.content is mapping %}
+                {{ porssari_response.content }}
+              {% else %}
+                {{ porssari_response.content | from_json }}
+              {% endif %}
+            {% else %}
+              {{ {} }}
+            {% endif %}
+    sensor:
+      - name: porssari_json_data
+        state: >
+          {% set old_state = this.state if this.state not in ['unknown', 'unavailable', 'none'] else 0 %}
+          {% if porssari_response.status == 200 and porssari_data is mapping %}
+            {{ porssari_data.get('metadata', {}).get('timestamp', old_state) }}
+          {% else %}
+            {{ old_state }}
+          {% endif %}
+        attributes:
+          metadata: >
+            {% set old_metadata = this.attributes.get('metadata') %}
+            {% if porssari_response.status == 200 and porssari_data is mapping %}
+              {{ porssari_data.get('metadata', old_metadata) }}
+            {% else %}
+              {{ old_metadata }}
+            {% endif %}
+          controls: >
+            {% set old_controls = this.attributes.get('controls', []) %}
+            {% if porssari_response.status == 200 and porssari_data is mapping %}
+              {{ porssari_data.get('controls', old_controls) }}
+            {% else %}
+              {{ old_controls }}
+            {% endif %}
+
   # Sensors for Channel states.
   - sensor:
-      - name: "porssari_channel_1_state"
+      - name: "Pörssäri Channel 1 State"
         unique_id: porssari_ch1_state
         state: >
           {% if is_state('binary_sensor.porssari_json_controls', 'on') %}
@@ -194,21 +225,6 @@ template:
             {{ -1 }}
           {% endif %}
 
-  # Sensor to save request json data.
-  - sensor:
-      - name: porssari_json_data
-        state: >
-          {% if state_attr("sensor.porssari_json_data", "metadata") %}
-            {{ state_attr("sensor.porssari_json_data", "metadata")['timestamp'] }}
-          {% else %}
-            {{ 0 }}
-          {% endif %}
-        attributes:
-          metadata: >
-            {{ state_attr("sensor.porssari_json", "metadata") if state_attr("sensor.porssari_json", "metadata") else state_attr("sensor.porssari_json_data", "metadata") }}
-          controls: >
-            {{ state_attr("sensor.porssari_json", "controls") if state_attr("sensor.porssari_json", "controls") else state_attr("sensor.porssari_json_data", "controls") }}
-
   # Sensor to determine if json is valid for controls
   - binary_sensor:
       - name: porssari_json_controls
@@ -220,34 +236,6 @@ template:
           {% else %}
             {{ false }}
           {% endif %}
-
-# Update logic for json-sensor.
-automation:
-  - id: "porssari_update_automation"
-    alias: porssari_update_json
-    description: "Uusi ohjaustieto haetaan kun asetuksia on päivitetty tai tunnin välein"
-    trigger:
-      - platform: time_pattern
-        minutes: /5
-      - platform: homeassistant
-        event: start
-    action:
-      - delay: "{{ range(30) | random }}"
-      - service: homeassistant.update_entity
-        alias: update_porssari_request
-        target:
-          entity_id: sensor.porssari_request
-      - if:
-          - condition: state
-            entity_id: sensor.porssari_request
-            state: "200"
-        then:
-          - delay: 12
-          - service: homeassistant.update_entity
-            alias: update_porssari_json
-            target:
-              entity_id: sensor.porssari_json
-    mode: single
 
 # Settings parameters
 input_text:
