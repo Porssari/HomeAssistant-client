@@ -19,7 +19,8 @@ rest_command:
         {% set timestamp = 0 %}
         {% set fetch_url = "https://api.porssari.fi/getcontrols.php" %}
       {% endif %}
-      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.1&json_version=2
+      {% set client_fw = state_attr("update.home_assistant_core_update", "installed_version") | default("", true) %}  
+      {{ fetch_url }}?device_mac={{ MAC }}&last_request={{ timestamp }}&client=Homeassistant_2.1{% if client_fw not in ["unknown", "unavailable", ""] %}&client_fw={{ client_fw | urlencode }}{% endif %}&json_version=2
     method: GET
 
 template:
