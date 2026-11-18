@@ -35,9 +35,10 @@ template:
       - delay: "{{ range(30) | random }}"
       - action: rest_command.porssari_fetch_json
         response_variable: porssari_response
+        continue_on_error: true
       - variables:
           porssari_data: >-
-            {% if porssari_response.status == 200 %}
+            {% if porssari_response is defined and porssari_response is mapping and porssari_response.get('status') == 200 %}
               {% if porssari_response.content is mapping %}
                 {{ porssari_response.content }}
               {% else %}
@@ -50,7 +51,7 @@ template:
       - name: porssari_json_data
         state: >
           {% set old_state = this.state if this.state not in ['unknown', 'unavailable', 'none'] else 0 %}
-          {% if porssari_response.status == 200 and porssari_data is mapping %}
+          {% if porssari_response is defined and porssari_response is mapping and porssari_response.get('status') == 200 and porssari_data is defined and porssari_data is mapping %}
             {{ porssari_data.get('metadata', {}).get('timestamp', old_state) }}
           {% else %}
             {{ old_state }}
@@ -58,14 +59,14 @@ template:
         attributes:
           metadata: >
             {% set old_metadata = this.attributes.get('metadata') %}
-            {% if porssari_response.status == 200 and porssari_data is mapping %}
+            {% if porssari_response is defined and porssari_response is mapping and porssari_response.get('status') == 200 and porssari_data is defined and porssari_data is mapping %}
               {{ porssari_data.get('metadata', old_metadata) }}
             {% else %}
               {{ old_metadata }}
             {% endif %}
           controls: >
             {% set old_controls = this.attributes.get('controls', []) %}
-            {% if porssari_response.status == 200 and porssari_data is mapping %}
+            {% if porssari_response is defined and porssari_response is mapping and porssari_response.get('status') == 200 and porssari_data is defined and porssari_data is mapping %}
               {{ porssari_data.get('controls', old_controls) }}
             {% else %}
               {{ old_controls }}
