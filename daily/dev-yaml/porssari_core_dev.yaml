@@ -51,6 +51,8 @@ template:
               {{ {} }}
             {% endif %}
     sensor:
+      # Note: When 15-minute prices are enabled, attributes may exceed Recorder's
+      # 16384-byte limit. You can exclude sensor.porssari_json_data_dev from recorder.
       - name: porssari_json_data_dev
         state: >
           {% set old_state = this.state if this.state not in ['unknown', 'unavailable', 'none'] else 0 %}
@@ -80,13 +82,6 @@ template:
               {{ porssari_data.get('prices', old_prices) }}
             {% else %}
               {{ old_prices }}
-            {% endif %}
-          ch_data: >
-            {% set old_ch_data = this.attributes.get('ch_data', []) %}
-            {% if porssari_response is defined and porssari_response is mapping and porssari_response.get('status') == 200 and porssari_data is defined and porssari_data is mapping %}
-              {{ porssari_data.get('ch_data', porssari_data.get('controls', old_ch_data)) }}
-            {% else %}
-              {{ old_ch_data }}
             {% endif %}
 
   # Sensors for Channel states.
@@ -410,11 +405,11 @@ template:
       - name: porssari_json_prices_dev
         state: >
           {% set ns = namespace(pricesToday=[]) %}
-          {% if state_attr("sensor.porssari_json_data_dev", "prices") %}
-            {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") | default({}, true) %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% if prices is mapping %}
             {% for item in prices | list %}
               {% if now().date() == as_datetime(item).date() %}
-                {% set ns.pricesToday = ns.pricesToday + [prices[item]['total_price'] | float] %}
+                {% set ns.pricesToday = ns.pricesToday + [prices[item].get('total_price', 0) | float(0)] %}
               {% endif %}
             {% endfor %}
           {% endif %}

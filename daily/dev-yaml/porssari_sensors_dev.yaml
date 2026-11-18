@@ -15,9 +15,10 @@ template:
         attributes:
           friendly_name: "Pörssäri dev sähkön hinta nyt"
         state: >
-          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "prices")[curHour]['total_price'] | float }}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping and curHour in prices %}
+            {{ prices[curHour].get('total_price', 0) | float(0) }}
           {% else %}
             {{ 0 }}
           {% endif %}
@@ -28,9 +29,10 @@ template:
         attributes:
           friendly_name: "Pörssäri dev sähkön spot-hinta nyt"
         state: >
-          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "prices")[curHour]['spot_price'] | float }}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping and curHour in prices %}
+            {{ prices[curHour].get('spot_price', 0) | float(0) }}
           {% else %}
             {{ 0 }}
           {% endif %}
@@ -41,9 +43,10 @@ template:
         attributes:
           friendly_name: "Pörssäri dev sähkön hinta nyt (eur)"
         state: >
-          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
-            {{ state_attr("sensor.porssari_json_data_dev", "prices")[curHour]['total_price'] | float / 100 }}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping and curHour in prices %}
+            {{ prices[curHour].get('total_price', 0) | float(0) / 100 }}
           {% else %}
             {{ 0 }}
           {% endif %}
@@ -51,15 +54,15 @@ template:
         unit_of_measurement: "snt/kWh"
         device_class: monetary
         state: >
-          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping %}
             {% set ns = namespace(prices=[]) %}
-            {% for item in timeStampList %}
+            {% for item in prices | list %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
+                {% set ns.prices = ns.prices + [prices[item].get('total_price', 0) | float(0)] %}
               {% endif %}
-            {% endfor %}
-            {{ ns.prices | average | float | round(2) if ns.prices | length >= 23 else 0 }}
+            {% endfor %}
+            {{ ns.prices | average | float(0) | round(2) if ns.prices | length >= 23 else 0 }}
           {% else %}
             {{ 0 }}
           {% endif %}
@@ -67,16 +70,16 @@ template:
         unit_of_measurement: "snt/kWh"
         device_class: monetary
         state: >
-          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
-            {% set tomorrow = now() + timedelta( days = 1 ) %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping %}
+            {% set tomorrow = now() + timedelta(days=1) %}
             {% set ns = namespace(prices=[]) %}
-            {% for item in timeStampList %}
+            {% for item in prices | list %}
               {% if tomorrow.day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
+                {% set ns.prices = ns.prices + [prices[item].get('total_price', 0) | float(0)] %}
               {% endif %}
-            {% endfor %}
-            {{ ns.prices | average | float | round(2) if ns.prices | length >= 23 else 0 }}
+            {% endfor %}
+            {{ ns.prices | average | float(0) | round(2) if ns.prices | length >= 23 else 0 }}
           {% else %}
             {{ 0 }}
           {% endif %}
@@ -84,35 +87,37 @@ template:
         unit_of_measurement: "snt/kWh"
         device_class: monetary
         state: >
-          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping %}
             {% set ns = namespace(prices=[]) %}
-            {% for item in timeStampList %}
+            {% for item in prices | list %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
+                {% set ns.prices = ns.prices + [prices[item].get('total_price', 0) | float(0)] %}
               {% endif %}
-            {% endfor %}
-            {{ ns.prices | min | float if ns.prices | length >= 23 else 0 }}
+            {% endfor %}
+            {{ ns.prices | min | float(0) if ns.prices | length >= 23 else 0 }}
           {% else %}
             {{ 0 }}
           {% endif %}
         attributes:
           Hour: >
-            {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-              {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
+            {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+            {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping %}
               {% set ns = namespace(ts=[], prices=[], hours=[]) %}
-              {% for item in timeStampList %}
+              {% for item in prices | list %}
                 {% if now().day == as_datetime(item).day %}
                   {% set ns.ts = ns.ts + [item] %}
-                  {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
-                {% endif %}
-              {% endfor %}
-              {% set pmin = ns.prices | min | float %}
-              {% for item in ns.ts %}
-                {% if state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float == pmin %}
-                  {% set ns.hours = ns.hours + [as_datetime(item).hour | int] %}
+                  {% set ns.prices = ns.prices + [prices[item].get('total_price', 0) | float(0)] %}
                 {% endif %}
               {% endfor %}
+              {% if ns.prices | length > 0 %}
+                {% set pmin = ns.prices | min | float(0) %}
+                {% for item in ns.ts %}
+                  {% if prices[item].get('total_price', 0) | float(0) == pmin %}
+                    {% set ns.hours = ns.hours + [as_datetime(item).hour | int(0)] %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
               {{ ns.hours }}
             {% else %}
               {{ 0 }}
@@ -121,54 +126,60 @@ template:
         unit_of_measurement: "snt/kWh"
         device_class: monetary
         state: >
-          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping %}
             {% set ns = namespace(prices=[]) %}
-            {% for item in timeStampList %}
+            {% for item in prices | list %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
+                {% set ns.prices = ns.prices + [prices[item].get('total_price', 0) | float(0)] %}
               {% endif %}
-            {% endfor %}
-            {{ ns.prices | max | float if ns.prices | length >= 23 else 0 }}
+            {% endfor %}
+            {{ ns.prices | max | float(0) if ns.prices | length >= 23 else 0 }}
           {% else %}
             {{ 0 }}
           {% endif %}
         attributes:
           Hour: >
-            {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-              {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
+            {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+            {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping %}
               {% set ns = namespace(ts=[], prices=[], hours=[]) %}
-              {% for item in timeStampList %}
+              {% for item in prices | list %}
                 {% if now().day == as_datetime(item).day %}
                   {% set ns.ts = ns.ts + [item] %}
-                  {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
-                {% endif %}
-              {% endfor %}
-              {% set pmin = ns.prices | max | float %}
-              {% for item in ns.ts %}
-                {% if state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float == pmin %}
-                  {% set ns.hours = ns.hours + [as_datetime(item).hour | int] %}
+                  {% set ns.prices = ns.prices + [prices[item].get('total_price', 0) | float(0)] %}
                 {% endif %}
               {% endfor %}
+              {% if ns.prices | length > 0 %}
+                {% set pmax = ns.prices | max | float(0) %}
+                {% for item in ns.ts %}
+                  {% if prices[item].get('total_price', 0) | float(0) == pmax %}
+                    {% set ns.hours = ns.hours + [as_datetime(item).hour | int(0)] %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
               {{ ns.hours }}
             {% else %}
               {{ 0 }}
             {% endif %}
       - name: porssari_dev_price_today_sd
         state: >
-          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') %}
-            {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping %}
             {% set ns = namespace(prices=[], values=[]) %}
-            {% for item in timeStampList %}
+            {% for item in prices | list %}
               {% if now().day == as_datetime(item).day %}
-                {% set ns.prices = ns.prices + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
+                {% set ns.prices = ns.prices + [prices[item].get('total_price', 0) | float(0)] %}
               {% endif %}
             {% endfor %}
-            {% set mean = ns.prices | average | float | round(2) %}
-            {% for value in ns.prices %}
-              {% set ns.values = ns.values + [ (value - mean)**2 ] %}
-            {% endfor %}
-            {{ sqrt(ns.values | sum / (ns.values | length)) | round(2) }}
+            {% if ns.prices | length > 0 %}
+              {% set mean = ns.prices | average | float(0) | round(2) %}
+              {% for value in ns.prices %}
+                {% set ns.values = ns.values + [(value - mean) ** 2] %}
+              {% endfor %}
+              {{ sqrt(ns.values | sum / (ns.values | length)) | round(2) }}
+            {% else %}
+              {{ 0 }}
+            {% endif %}
           {% else %}
             {{ 0 }}
           {% endif %}
@@ -177,19 +188,47 @@ template:
       - name: Porssari_dev_price_under_avg
         state: >
           {% set sdFactor = 0 %}
-          {{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + sdFactor * states("sensor.porssari_dev_price_today_sd") | float) }}
+          {% set priceNow = states("sensor.porssari_dev_price_now") %}
+          {% set avgToday = states("sensor.porssari_dev_avg_today") %}
+          {% set sdToday = states("sensor.porssari_dev_price_today_sd") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and is_number(priceNow) and is_number(avgToday) and is_number(sdToday) %}
+            {{ priceNow | float(0) < (avgToday | float(0) + sdFactor * sdToday | float(0)) }}
+          {% else %}
+            {{ false }}
+          {% endif %}
       - name: Porssari_dev_price_under_avg_plus1SD
         state: >
           {% set sdFactor = 1 %}
-          {{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + sdFactor * states("sensor.porssari_dev_price_today_sd") | float) }}
+          {% set priceNow = states("sensor.porssari_dev_price_now") %}
+          {% set avgToday = states("sensor.porssari_dev_avg_today") %}
+          {% set sdToday = states("sensor.porssari_dev_price_today_sd") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and is_number(priceNow) and is_number(avgToday) and is_number(sdToday) %}
+            {{ priceNow | float(0) < (avgToday | float(0) + sdFactor * sdToday | float(0)) }}
+          {% else %}
+            {{ false }}
+          {% endif %}
       - name: Porssari_dev_price_under_avg_plus2SD
         state: >
           {% set sdFactor = 2 %}
-          {{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + sdFactor * states("sensor.porssari_dev_price_today_sd") | float) }}
+          {% set priceNow = states("sensor.porssari_dev_price_now") %}
+          {% set avgToday = states("sensor.porssari_dev_avg_today") %}
+          {% set sdToday = states("sensor.porssari_dev_price_today_sd") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and is_number(priceNow) and is_number(avgToday) and is_number(sdToday) %}
+            {{ priceNow | float(0) < (avgToday | float(0) + sdFactor * sdToday | float(0)) }}
+          {% else %}
+            {{ false }}
+          {% endif %}
       - name: Porssari_dev_price_under_avg_minus1SD
         state: >
           {% set sdFactor = -1 %}
-          {{ states("sensor.porssari_dev_price_now") | float < (states("sensor.porssari_dev_avg_today") | float + sdFactor * states("sensor.porssari_dev_price_today_sd") | float) }}
+          {% set priceNow = states("sensor.porssari_dev_price_now") %}
+          {% set avgToday = states("sensor.porssari_dev_avg_today") %}
+          {% set sdToday = states("sensor.porssari_dev_price_today_sd") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and is_number(priceNow) and is_number(avgToday) and is_number(sdToday) %}
+            {{ priceNow | float(0) < (avgToday | float(0) + sdFactor * sdToday | float(0)) }}
+          {% else %}
+            {{ false }}
+          {% endif %}
 
   - sensor:
       - name: Porssari_dev_hours_under_sdfactor_0
@@ -197,61 +236,81 @@ template:
           {% set minHours = 0 %}
           {% set maxHours = 24 %}
           {% set sdFactor = 0 %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
-          {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
-          {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
-          {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
-            {% endif %}
-          {% endfor %}
-          {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+          {% set sdPrice = states("sensor.porssari_dev_price_today_sd") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping and is_number(meanPrice) and is_number(sdPrice) %}
+            {% set cutoffPrice = meanPrice | float(0) + (sdFactor * sdPrice | float(0)) %}
+            {% set ns = namespace(hours=[]) %}
+            {% for item in prices | list %}
+              {% if now().day == as_datetime(item).day and prices[item].get('total_price', 0) | float(0) <= cutoffPrice %}
+                {% set ns.hours = ns.hours + [prices[item].get('total_price', 0) | float(0)] %}
+              {% endif %}
+            {% endfor %}
+            {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+          {% else %}
+            {{ minHours }}
+          {% endif %}
       - name: Porssari_dev_hours_under_sdfactor_plus1
         state: >
           {% set minHours = 0 %}
           {% set maxHours = 24 %}
           {% set sdFactor = 1 %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
-          {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
-          {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
-          {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['price'] | float] %}
-            {% endif %}
-          {% endfor %}
-          {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+          {% set sdPrice = states("sensor.porssari_dev_price_today_sd") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping and is_number(meanPrice) and is_number(sdPrice) %}
+            {% set cutoffPrice = meanPrice | float(0) + (sdFactor * sdPrice | float(0)) %}
+            {% set ns = namespace(hours=[]) %}
+            {% for item in prices | list %}
+              {% if now().day == as_datetime(item).day and prices[item].get('total_price', 0) | float(0) <= cutoffPrice %}
+                {% set ns.hours = ns.hours + [prices[item].get('total_price', 0) | float(0)] %}
+              {% endif %}
+            {% endfor %}
+            {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+          {% else %}
+            {{ minHours }}
+          {% endif %}
       - name: Porssari_dev_hours_under_sdfactor_plus2
         state: >
           {% set minHours = 0 %}
           {% set maxHours = 24 %}
           {% set sdFactor = 2 %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
-          {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
-          {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
-          {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
-            {% endif %}
-          {% endfor %}
-          {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+          {% set sdPrice = states("sensor.porssari_dev_price_today_sd") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping and is_number(meanPrice) and is_number(sdPrice) %}
+            {% set cutoffPrice = meanPrice | float(0) + (sdFactor * sdPrice | float(0)) %}
+            {% set ns = namespace(hours=[]) %}
+            {% for item in prices | list %}
+              {% if now().day == as_datetime(item).day and prices[item].get('total_price', 0) | float(0) <= cutoffPrice %}
+                {% set ns.hours = ns.hours + [prices[item].get('total_price', 0) | float(0)] %}
+              {% endif %}
+            {% endfor %}
+            {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+          {% else %}
+            {{ minHours }}
+          {% endif %}
       - name: Porssari_dev_hours_under_sdfactor_minus1
         state: >
           {% set minHours = 0 %}
           {% set maxHours = 24 %}
           {% set sdFactor = -1 %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
-          {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
-          {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
-          {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
-            {% endif %}
-          {% endfor %}
-          {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+          {% set sdPrice = states("sensor.porssari_dev_price_today_sd") %}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping and is_number(meanPrice) and is_number(sdPrice) %}
+            {% set cutoffPrice = meanPrice | float(0) + (sdFactor * sdPrice | float(0)) %}
+            {% set ns = namespace(hours=[]) %}
+            {% for item in prices | list %}
+              {% if now().day == as_datetime(item).day and prices[item].get('total_price', 0) | float(0) <= cutoffPrice %}
+                {% set ns.hours = ns.hours + [prices[item].get('total_price', 0) | float(0)] %}
+              {% endif %}
+            {% endfor %}
+            {{ minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length }}
+          {% else %}
+            {{ minHours }}
+          {% endif %}
 
   - binary_sensor:
       - name: Porssari_dev_rank_acceptable
@@ -259,15 +318,20 @@ template:
           {% set minHours = 0 %}
           {% set maxHours = 24 %}
           {% set sdFactor = 0 %}
+          {% set prices = state_attr("sensor.porssari_json_data_dev", "prices") %}
           {% set meanPrice = states("sensor.porssari_dev_avg_today") %}
-          {% set cutoffPrice = meanPrice | float + (sdFactor * states("sensor.porssari_dev_price_today_sd") | float) %}
-          {% set ns = namespace(hours=[]) %}
-          {% set timeStampList = state_attr("sensor.porssari_json_data_dev", "prices") | list %}
-          {% for item in timeStampList %}
-            {% if now().day == as_datetime(item).day and state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float <= cutoffPrice %}
-              {% set ns.hours = ns.hours + [state_attr("sensor.porssari_json_data_dev", "prices")[item]['total_price'] | float] %}
-            {% endif %}
-          {% endfor %}
-          {% set maxRank = minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length %}
+          {% set sdPrice = states("sensor.porssari_dev_price_today_sd") %}
           {% set curHour = now().strftime('%Y-%m-%dT%H:00:00%z') | string %}
-          {{ state_attr("sensor.porssari_json_data_dev", "prices")[curHour]['rank_cheap'] | int < maxRank }}
+          {% if is_state('binary_sensor.porssari_json_prices_dev', 'on') and prices is mapping and is_number(meanPrice) and is_number(sdPrice) and curHour in prices %}
+            {% set cutoffPrice = meanPrice | float(0) + (sdFactor * sdPrice | float(0)) %}
+            {% set ns = namespace(hours=[]) %}
+            {% for item in prices | list %}
+              {% if now().day == as_datetime(item).day and prices[item].get('total_price', 0) | float(0) <= cutoffPrice %}
+                {% set ns.hours = ns.hours + [prices[item].get('total_price', 0) | float(0)] %}
+              {% endif %}
+            {% endfor %}
+            {% set maxRank = minHours if ns.hours | length < minHours else maxHours if ns.hours | length > maxHours else ns.hours | length %}
+            {{ prices[curHour].get('rank_cheap', 0) | int(0) < maxRank }}
+          {% else %}
+            {{ false }}
+          {% endif %}
